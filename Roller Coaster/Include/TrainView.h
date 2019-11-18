@@ -68,6 +68,14 @@ public:
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
+	float t_time;
+	unsigned int DIVIDE_LINE = 250;
+
+	typedef enum {
+		spline_Linear = 0,
+		spline_CardinalCubic = 1,
+		spline_CubicB_Spline = 2
+	} spline_t;
 
 };  
 #endif // TRAINVIEW_H  

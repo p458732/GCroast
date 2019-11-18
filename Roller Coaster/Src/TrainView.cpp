@@ -224,9 +224,9 @@ void TrainView::drawStuff(bool doingShadows)
 	// don't draw the control points if you're driving 
 	// (otherwise you get sea-sick as you drive through them)
 	if (this->camera != 2) {
-		for(size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
+		for (size_t i = 0; i < this->m_pTrack->points.size(); ++i) {
 			if (!doingShadows) {
-				if ( ((int) i) != selectedCube)
+				if (((int)i) != selectedCube)
 					glColor3ub(240, 60, 60);
 				else
 					glColor3ub(240, 240, 30);
@@ -240,6 +240,69 @@ void TrainView::drawStuff(bool doingShadows)
 	// TODO: 
 	// call your own track drawing code
 	//####################################################################
+	float percent = 1.0f / DIVIDE_LINE;
+	spline_t type_spline = (spline_t)curve;
+	//跑每個控制點
+	for (size_t i = 0; i < m_pTrack->points.size(); ++i)
+	{
+		// pos
+		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+		// orient
+		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
+		Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		glLineWidth(4);
+	
+		Pnt3f qt, qt0, qt1, orient_t;
+		float t = 0;
+		//選擇直線 曲線....
+		switch (type_spline)
+		{
+			case spline_Linear:
+				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+				break;
+		}
+		for (size_t j = 0; j < DIVIDE_LINE; j++) {
+			qt0 = qt;
+			switch (type_spline) {
+			case spline_Linear:
+				orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+				break;
+			}
+			t += percent;
+			switch (type_spline) {
+			case spline_Linear:
+				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+				break;
+			}
+			qt1 = qt;
+			glLineWidth(0.5);
+			glBegin(GL_LINES);
+			
+			if (!doingShadows) {
+				glColor3ub(32, 32, 64);
+			}
+			glVertex3f(qt0.x, qt0.y, qt0.z);
+			glVertex3f(qt1.x, qt1.y, qt1.z);
+			glEnd();
+			/*// cross
+			Pnt3f forward = Pnt3f(qt1.x - qt0.x, qt1.y - qt0.y, qt1.z - qt0.z);
+			forward.normalize();
+			Pnt3f cross_t = forward * orient_t;
+			cross_t.normalize();
+			cross_t = cross_t * 2.5f;
+			orient_t.normalize();
+			glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
+			glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
+
+			glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
+			glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
+			glEnd();*/
+
+
+
+		}
+	}
 
 #ifdef EXAMPLE_SOLUTION
 	drawTrack(this, doingShadows);
