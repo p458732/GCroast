@@ -29,6 +29,49 @@ void TrainView::initializeTexture()
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
 	Textures.push_back(texture);
 }
+void TrainView::drawTrain(float x)
+{
+	spline_t type_spline = (spline_t)curve;
+	Pnt3f qt, qt0, qt1, orient_t;
+	float t = 1;
+	t *= m_pTrack->points.size();
+	size_t i;
+	for (i = 0; t > 1; t -= 1)
+	{
+		//pos
+		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+
+		// orient
+		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
+		Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		switch (type_spline) {
+		case spline_Linear:
+			// Linear
+			qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+			break;
+		}
+		glColor3ub(255, 255, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(0.0f, 1.0f);
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glEnd();
+		i++;
+	}
+		
+		
+
+	
+
+
+}
 void TrainView:: resetArcball()
 	//========================================================================
 {
@@ -261,7 +304,8 @@ void TrainView::drawStuff(bool doingShadows)
 			case spline_Linear:
 				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
 				break;
-		}
+		} 
+		//畫線吧
 		for (size_t j = 0; j < DIVIDE_LINE; j++) {
 			qt0 = qt;
 			switch (type_spline) {
@@ -285,7 +329,7 @@ void TrainView::drawStuff(bool doingShadows)
 			glVertex3f(qt0.x, qt0.y, qt0.z);
 			glVertex3f(qt1.x, qt1.y, qt1.z);
 			glEnd();
-			/*// cross
+			// cross
 			Pnt3f forward = Pnt3f(qt1.x - qt0.x, qt1.y - qt0.y, qt1.z - qt0.z);
 			forward.normalize();
 			Pnt3f cross_t = forward * orient_t;
@@ -297,11 +341,29 @@ void TrainView::drawStuff(bool doingShadows)
 
 			glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
 			glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
-			glEnd();*/
+			//畫支撐
+			Pnt3f Girder = (cross_t.y > 0) ? 3 * cross_t : (-3) * cross_t;//樑向量
+			//橫軌道
+			track_cumulative_dist += pow(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2), 0.5);
+			if (track_cumulative_dist >= track_spacing) {
+				track_cumulative_dist -= track_spacing;
+				if (track == 1) {
+					glBegin(GL_QUADS);
+					if (!doingShadows)
+						glColor3ub(64, 32, 0);//咖啡
+					glVertex3f(qt0.x + cross_t.x * 1.6 - forward.x * 1.5, qt0.y + cross_t.y * 1.6 - forward.y * 1.5, qt0.z + cross_t.z * 1.6 - forward.z * 1.5);
+					glVertex3f(qt0.x + cross_t.x * 1.6 + forward.x * 1.5, qt0.y + cross_t.y * 1.6 + forward.y * 1.5, qt0.z + cross_t.z * 1.6 + forward.z * 1.5);
+					glVertex3f(qt0.x - cross_t.x * 1.6 + forward.x * 1.5, qt0.y - cross_t.y * 1.6 + forward.y * 1.5, qt0.z - cross_t.z * 1.6 + forward.z * 1.5);
+					glVertex3f(qt0.x - cross_t.x * 1.6 - forward.x * 1.5, qt0.y - cross_t.y * 1.6 - forward.y * 1.5, qt0.z - cross_t.z * 1.6 - forward.z * 1.5);
+					glEnd();
+				}
+			}
+			glEnd();
 
 
 
 		}
+		track_cumulative_dist = track_spacing;
 	}
 
 #ifdef EXAMPLE_SOLUTION
@@ -309,6 +371,7 @@ void TrainView::drawStuff(bool doingShadows)
 #endif
 
 	// draw the train
+	drawTrain(0);
 	//####################################################################
 	// TODO: 
 	//	call your own train drawing code
