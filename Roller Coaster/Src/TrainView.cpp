@@ -51,6 +51,9 @@ void TrainView::drawTrain(float x)
 	size_t i;
 	for (i = 0; t > 1; t -= 1)
 	{
+		i++;
+	}
+
 		//pos
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
 		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
@@ -65,19 +68,79 @@ void TrainView::drawTrain(float x)
 			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
 			break;
 		}
-		glColor3ub(255, 255, 255);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);
+		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);
+		glTexCoord2f(1.0f, 0.0f);//右下
 		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);
+		glTexCoord2f(1.0f, 1.0f);//右上
 		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(0.0f, 1.0f);
+		glTexCoord2f(0.0f, 1.0f);//左上
 		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
 		glEnd();
-		i++;
-	}
+		
+		glColor3ub(0, 255, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(0, 0, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glEnd();
+
+
+		glColor3ub(255, 0, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(0, 255, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(255, 0, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glEnd();
+		
 		
 		
 
@@ -319,7 +382,7 @@ void TrainView::drawStuff(bool doingShadows)
 	for (size_t i = 0; i < m_pTrack->points.size(); ++i)
 	{
 		
-		m_pTrack->points[i].pos.y = 10*i;
+	
 		// pos
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
 
