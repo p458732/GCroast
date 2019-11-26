@@ -452,13 +452,24 @@ void TrainView::drawStuff(bool doingShadows)
 				if (track == 1) {
 					glBegin(GL_QUADS);
 					if (!doingShadows)
-						glColor3ub(64, 32, 0);//�@��
+						glColor3ub(64, 32, 0);//咖啡
 					glVertex3f(qt0.x + cross_t.x * 1.6 - forward.x * 1.5, qt0.y + cross_t.y * 1.6 - forward.y * 1.5, qt0.z + cross_t.z * 1.6 - forward.z * 1.5);
 					glVertex3f(qt0.x + cross_t.x * 1.6 + forward.x * 1.5, qt0.y + cross_t.y * 1.6 + forward.y * 1.5, qt0.z + cross_t.z * 1.6 + forward.z * 1.5);
 					glVertex3f(qt0.x - cross_t.x * 1.6 + forward.x * 1.5, qt0.y - cross_t.y * 1.6 + forward.y * 1.5, qt0.z - cross_t.z * 1.6 + forward.z * 1.5);
 					glVertex3f(qt0.x - cross_t.x * 1.6 - forward.x * 1.5, qt0.y - cross_t.y * 1.6 - forward.y * 1.5, qt0.z - cross_t.z * 1.6 - forward.z * 1.5);
 					glEnd();
 				}
+			}
+			//ROAD
+			if (track == 2) {
+				glBegin(GL_QUADS);
+				if (!doingShadows)
+					glColor3ub(80, 80, 80);
+				glVertex3f(qt0.x + cross_t.x * 2.0, qt0.y + cross_t.y * 2.0, qt0.z + cross_t.z * 2.0);
+				glVertex3f(qt1.x + cross_t.x * 2.0, qt1.y + cross_t.y * 2.0, qt1.z + cross_t.z * 2.0);
+				glVertex3f(qt1.x - cross_t.x * 2.0, qt1.y - cross_t.y * 2.0, qt1.z - cross_t.z * 2.0);
+				glVertex3f(qt0.x - cross_t.x * 2.0, qt0.y - cross_t.y * 2.0, qt0.z - cross_t.z * 2.0);
+				glEnd();
 			}
 			glEnd();
 
