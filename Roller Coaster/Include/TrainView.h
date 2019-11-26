@@ -12,6 +12,8 @@
 #include "Triangle.h"
 #include "Square.h"
 
+
+
 typedef struct tag_PARTICLE {
 	GLfloat xpos;//(xpos,ypos,zpos)為particle的position
 	GLfloat ypos;

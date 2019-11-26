@@ -231,8 +231,13 @@ setProjection()
 //========================================================================
 void TrainView::drawStuff(bool doingShadows)
 {
+	
+
+
+	//--------------------------------------------------------------------
 	DrawParticles();
-	ProcessParticles();/////////////////////////////////////////////////
+	ProcessParticles();
+	//--------------------------------------------------------------------
 	// Draw the control points
 	// don't draw the control points if you're driving 
 	// (otherwise you get sea-sick as you drive through them)
