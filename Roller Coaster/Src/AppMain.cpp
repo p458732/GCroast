@@ -482,19 +482,21 @@ advanceTrain(float dir)
 	//#####################################################################
 	// TODO: make this work for your train
 	//#####################################################################+
+	dir = 1;
+	
+
 	trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
 	if (trainview->t_time > 1.0f)
 		trainview->t_time -= 1.0f;
 	if (this->trainview->isrun) {
 		if (clock() - lastRedraw > CLOCKS_PER_SEC / 30) {
 			lastRedraw = clock();
-			this->advanceTrain();
 			this->damageMe();
+			this->advanceTrain();
+			
 		}
 	}
-	glMatrixMode(GL_PROJECTION);
-	gluPerspective(120, 1, 1, 200); glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	
 	
 
 

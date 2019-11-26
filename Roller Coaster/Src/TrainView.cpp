@@ -42,6 +42,69 @@ void TrainView::initializeTexture()
 	Textures.push_back(texture);
 
 }
+Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type,float t)
+{
+	
+	float Gmartix[3][4] = {
+		con1.x,con2.x,con3.x,con4.x,
+		con1.y,con2.y,con3.y,con4.y,
+		con1.z,con2.z,con3.z,con4.z
+	};
+	float Tmartix[4]= {
+		t*t*t,
+		t*t,
+		t,
+		1
+	};
+	float MTmartix[4] = {0};
+	float  qt[3];
+	//type1=Cardinal
+	if (type == 1)
+	{
+		
+		float Mmartix[4][4] = {
+		-1, 2, -1, 0,
+		2- tau, -3+ tau, 0, 1,
+		-2 + tau, 3- 2 *tau,tau,0,
+		tau,-tau,0,0
+		};
+		for (int i = 0; i < 4; i++) {
+			MTmartix[i] = 0.0;
+			for (int j = 0; j < 4; j++) {
+				MTmartix[i] += Mmartix[i][j] * Tmartix[j];
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			qt[i] = 0;
+			for (int j = 0; j < 4; j++) {
+				qt[i] += Gmartix[i][j] * MTmartix[j];
+			}
+		}
+	}
+	//type2=BSpine
+	else if (type == 2)
+	{
+		float Mmartix[4][4] = {
+		(-1 / 6), (1 / 2), (-1 / 2), (1 / 6),
+		(1 / 2), (-1) , 0, (2 / 3),
+		(-1 / 2),(1 / 2), (1 / 2),(1 / 6),
+		(1 / 6), 0,0,0
+		};
+		for (int i = 0; i < 4; i++) {
+			MTmartix[i] = 0.0;
+			for (int j = 0; j < 4; j++) {
+				MTmartix[i] += Mmartix[i][j] * Tmartix[j];
+			}
+		}
+		for (int i = 0; i < 3; i++) {
+			qt[i] = 0;
+			for (int j = 0; j < 4; j++) {
+				qt[i] += Gmartix[i][j] * MTmartix[j];
+			}
+		}
+	}
+	return Pnt3f(qt[0],qt[1],qt[2]);
+}
 void TrainView::drawTrain(float x)
 {
 	spline_t type_spline = (spline_t)curve;
@@ -80,7 +143,7 @@ void TrainView::drawTrain(float x)
 		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
 		glEnd();
 		
-		glColor3ub(0, 255, 0);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
@@ -92,7 +155,7 @@ void TrainView::drawTrain(float x)
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
 		glEnd();
 
-		glColor3ub(0, 0, 255);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
@@ -105,7 +168,7 @@ void TrainView::drawTrain(float x)
 		glEnd();
 
 
-		glColor3ub(255, 0, 0);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
@@ -117,7 +180,7 @@ void TrainView::drawTrain(float x)
 		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
 		glEnd();
 
-		glColor3ub(0, 255, 255);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
@@ -129,7 +192,7 @@ void TrainView::drawTrain(float x)
 		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
 		glEnd();
 
-		glColor3ub(255, 0, 255);
+		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
@@ -381,24 +444,39 @@ void TrainView::drawStuff(bool doingShadows)
 	//跑每個控制點
 	for (size_t i = 0; i < m_pTrack->points.size(); ++i)
 	{
-		
-	
 		// pos
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
-
 		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+		Pnt3f cp_pos_p3 , cp_pos_p4;
+		//如果有4個點
+	
+			 cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+			 cp_pos_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].pos;
+		
 		// orient
 		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
 		Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		Pnt3f cp_orient_p3, cp_orient_p4;
+		//如果有4個點
+		
+			 cp_orient_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
+			 cp_orient_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].orient;
+		
 		glLineWidth(4);
-	
 		Pnt3f qt, qt0, qt1, orient_t;
 		float t = 0;
 		//選擇直線 曲線....
+		
 		switch (type_spline)
 		{
 			case spline_Linear:
 				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+				break;
+			case spline_CardinalCubic:
+				qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, 0);
+				break;
+			case spline_CubicB_Spline :
+				qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, 0);
 				break;
 		} 
 		//�e�u�a
@@ -408,17 +486,34 @@ void TrainView::drawStuff(bool doingShadows)
 			case spline_Linear:
 				orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
 				break;
+			case spline_CardinalCubic:
+				orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, 0);
+				break;
+			case spline_CubicB_Spline:
+				orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, 0);
+				break;
 			}
 			t += percent;
-			switch (type_spline) {
+			
+			switch (type_spline)
+			{
 			case spline_Linear:
 				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
 				break;
+			case spline_CardinalCubic:
+				qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, t);
+				
+				break;
+			case spline_CubicB_Spline:
+				qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, t);
+				break;
 			}
 			qt1 = qt;
+			
 			glLineWidth(0.5);
 			glBegin(GL_LINES);
-			
+			glVertex3f(qt0.x, qt0.y, qt0.z);
+			glVertex3f(qt1.x, qt1.y, qt1.z);
 			if (!doingShadows) {
 				glColor3ub(32, 32, 64);
 			}
@@ -431,7 +526,7 @@ void TrainView::drawStuff(bool doingShadows)
 			orient_t.normalize();
 			glVertex3f(qt0.x + cross_t.x, qt0.y + cross_t.y, qt0.z + cross_t.z);
 			glVertex3f(qt1.x + cross_t.x, qt1.y + cross_t.y, qt1.z + cross_t.z);
-
+			
 			glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
 			glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
 			glEnd();
