@@ -33,12 +33,120 @@ void TrainView::initializeGL()
 	//Initialize texture 
 	initializeTexture();
 	
+	
 }
 void TrainView::initializeTexture()
 {
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
 	Textures.push_back(texture);
+
+}
+void TrainView::drawTrain(float x)
+{
+	spline_t type_spline = (spline_t)curve;
+	Pnt3f qt, qt0, qt1, orient_t;
+	float t = 1;
+	t *= m_pTrack->points.size();
+	size_t i;
+	for (i = 0; t > 1; t -= 1)
+	{
+		i++;
+	}
+
+		//pos
+		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+
+		// orient
+		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
+		Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		switch (type_spline) {
+		case spline_Linear:
+			// Linear
+			qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+			break;
+		}
+		glColor3ub(0, 0, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glEnd();
+		
+		glColor3ub(0, 255, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(0, 0, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glEnd();
+
+
+		glColor3ub(255, 0, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(0, 255, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+		glEnd();
+
+		glColor3ub(255, 0, 255);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f, 0.0f);//左下
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+		glTexCoord2f(1.0f, 0.0f);//右下
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+		glTexCoord2f(1.0f, 1.0f);//右上
+		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+		glTexCoord2f(0.0f, 1.0f);//左上
+		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+		glEnd();
+		
+		
+		
+
+	
+
+
 }
 void TrainView:: resetArcball()
 	//========================================================================
@@ -49,14 +157,25 @@ void TrainView:: resetArcball()
 	arcball.setup(this, 40, 250, .2f, .4f, 0);
 }
 
+void TrainView::drawVolcanic()
+{
+	
+	
+	
+	m->render(false, false);
+	
+
+
+}
 void TrainView::paintGL()
 {
-
+	
 	//*********************************************************************
 	//
 	// * Set up basic opengl informaiton
 	//
 	//**********************************************************************
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Set up the view port
 	glViewport(0,0,width(),height());
@@ -95,6 +214,7 @@ void TrainView::paintGL()
 		glEnable(GL_LIGHT1);
 		glEnable(GL_LIGHT2);
 	}
+	
 
 	//*********************************************************************
 	//
@@ -137,7 +257,7 @@ void TrainView::paintGL()
 	setupObjects();
 
 	drawStuff();
-
+	
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
 		setupShadows();
@@ -229,15 +349,13 @@ setProjection()
 // if you have other objects in the world, make sure to draw them
 //########################################################################
 //========================================================================
+
 void TrainView::drawStuff(bool doingShadows)
 {
 	
-
-
-	//--------------------------------------------------------------------
+	drawVolcanic();
 	DrawParticles();
-	ProcessParticles();
-	//--------------------------------------------------------------------
+	ProcessParticles();/////////////////////////////////////////////////
 	// Draw the control points
 	// don't draw the control points if you're driving 
 	// (otherwise you get sea-sick as you drive through them)
@@ -263,8 +381,11 @@ void TrainView::drawStuff(bool doingShadows)
 	//跑每個控制點
 	for (size_t i = 0; i < m_pTrack->points.size(); ++i)
 	{
+		
+	
 		// pos
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+
 		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
 		// orient
 		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
@@ -279,7 +400,8 @@ void TrainView::drawStuff(bool doingShadows)
 			case spline_Linear:
 				qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
 				break;
-		}
+		} 
+		//�e�u�a
 		for (size_t j = 0; j < DIVIDE_LINE; j++) {
 			qt0 = qt;
 			switch (type_spline) {
@@ -300,10 +422,7 @@ void TrainView::drawStuff(bool doingShadows)
 			if (!doingShadows) {
 				glColor3ub(32, 32, 64);
 			}
-			glVertex3f(qt0.x, qt0.y, qt0.z);
-			glVertex3f(qt1.x, qt1.y, qt1.z);
-			glEnd();
-			/*// cross
+			// cross
 			Pnt3f forward = Pnt3f(qt1.x - qt0.x, qt1.y - qt0.y, qt1.z - qt0.z);
 			forward.normalize();
 			Pnt3f cross_t = forward * orient_t;
@@ -315,11 +434,39 @@ void TrainView::drawStuff(bool doingShadows)
 
 			glVertex3f(qt0.x - cross_t.x, qt0.y - cross_t.y, qt0.z - cross_t.z);
 			glVertex3f(qt1.x - cross_t.x, qt1.y - cross_t.y, qt1.z - cross_t.z);
-			glEnd();*/
+			glEnd();
+			//�e�伵
+			Pnt3f Girder = (cross_t.y > 0) ? 3 * cross_t : (-3) * cross_t;//�٦V�q
+			//if (j == 0) {
+			//	if (!doingShadows)
+			//		glColor3ub(130, 130, 130);
+			//	//樑
+			//	drawCube(qt0 + Pnt3f(-1, 0, -1) + Pnt3f(Girder.x, 0, Girder.z), qt0 + Pnt3f(1, 0, -1) + Pnt3f(Girder.x, 0, Girder.z), qt0 + Pnt3f(1, 0, 1), qt0 + Pnt3f(-1, 0, 1), qt0 + Pnt3f(-1, (cp_orient_p1.y < 0) ? 2 : -2, -1) + Pnt3f(Girder.x, 0, Girder.z));
+			//	//柱
+			//	drawCube(qt0 + Pnt3f(-1, 0, -1) + Pnt3f(Girder.x, 0, Girder.z), qt0 + Pnt3f(1, 0, -1) + Pnt3f(Girder.x, 0, Girder.z), qt0 + Pnt3f(1, 0, 1) + Pnt3f(Girder.x, 0, Girder.z), qt0 + Pnt3f(-1, 0, 1) + Pnt3f(Girder.x, 0, Girder.z), Pnt3f(qt.x - 1, 0, qt.z - 1) + Pnt3f(Girder.x, 0, Girder.z));
+			//}
+			//��y�D
+			track_cumulative_dist += pow(pow(qt1.x - qt0.x, 2) + pow(qt1.y - qt0.y, 2) + pow(qt1.z - qt0.z, 2), 0.5);
+			if (track_cumulative_dist >= track_spacing) {
+				track_cumulative_dist -= track_spacing;
+				if (track == 1) {
+					glBegin(GL_QUADS);
+					if (!doingShadows)
+						glColor3ub(64, 32, 0);//�@��
+					glVertex3f(qt0.x + cross_t.x * 1.6 - forward.x * 1.5, qt0.y + cross_t.y * 1.6 - forward.y * 1.5, qt0.z + cross_t.z * 1.6 - forward.z * 1.5);
+					glVertex3f(qt0.x + cross_t.x * 1.6 + forward.x * 1.5, qt0.y + cross_t.y * 1.6 + forward.y * 1.5, qt0.z + cross_t.z * 1.6 + forward.z * 1.5);
+					glVertex3f(qt0.x - cross_t.x * 1.6 + forward.x * 1.5, qt0.y - cross_t.y * 1.6 + forward.y * 1.5, qt0.z - cross_t.z * 1.6 + forward.z * 1.5);
+					glVertex3f(qt0.x - cross_t.x * 1.6 - forward.x * 1.5, qt0.y - cross_t.y * 1.6 - forward.y * 1.5, qt0.z - cross_t.z * 1.6 - forward.z * 1.5);
+					glEnd();
+				}
+			}
+			glEnd();
 
-
+			
 
 		}
+		track_cumulative_dist = track_spacing;
+		
 	}
 
 #ifdef EXAMPLE_SOLUTION
@@ -327,6 +474,7 @@ void TrainView::drawStuff(bool doingShadows)
 #endif
 
 	// draw the train
+	drawTrain(0);
 	//####################################################################
 	// TODO: 
 	//	call your own train drawing code
@@ -336,6 +484,7 @@ void TrainView::drawStuff(bool doingShadows)
 	if (!tw->trainCam->value())
 		drawTrain(this, doingShadows);
 #endif
+
 }
 
 void TrainView::

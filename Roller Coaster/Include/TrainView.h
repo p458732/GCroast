@@ -11,9 +11,8 @@
 #include "Track.H"
 #include "Triangle.h"
 #include "Square.h"
-
-
-
+#include "Model.h"
+#include "3DSLoader.h"
 typedef struct tag_PARTICLE {
 	GLfloat xpos;//(xpos,ypos,zpos)為particle的position
 	GLfloat ypos;
@@ -54,10 +53,11 @@ public:
 	~TrainView();  
 
 public:
+
 	// overrides of important window things
 	//virtual int handle(int);
 	virtual void paintGL();
-
+	Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
@@ -69,7 +69,7 @@ public:
 
 	// Reset the Arc ball control
 	void resetArcball();
-
+	void drawVolcanic();
 	// pick a point (for when the mouse goes down)
 	void doPick(int mx, int my);
 
@@ -82,7 +82,8 @@ public:
 	int				selectedCube;  // simple - just remember which cube is selected
 
 	CTrack*			m_pTrack;		// The track of the entire scene
-
+	float track_cumulative_dist = 8.0f;
+	float track_spacing = 8.0;
 	int camera;
 	int curve;
 	int track;
@@ -96,10 +97,11 @@ public:
 	unsigned int DIVIDE_LINE = 250;
 
 	typedef enum {
+
 		spline_Linear = 0,
 		spline_CardinalCubic = 1,
 		spline_CubicB_Spline = 2
 	} spline_t;
-
+	void drawTrain(float x);
 };  
 #endif // TRAINVIEW_H  
