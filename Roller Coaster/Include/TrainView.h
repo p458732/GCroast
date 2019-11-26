@@ -88,6 +88,7 @@ public:
 	int curve;
 	int track;
 	bool isrun;
+	Pnt3f GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type, float t);
 	Triangle* triangle;
 	Square* square;
 	GLfloat ProjectionMatrex[16];
