@@ -13,6 +13,7 @@
 #include "Square.h"
 #include "Model.h"
 #include "3DSLoader.h"
+
 typedef struct tag_PARTICLE {
 	GLfloat xpos;//(xpos,ypos,zpos)為particle的position
 	GLfloat ypos;
@@ -35,7 +36,7 @@ typedef struct tag_PARTICLE {
 	tag_PARTICLE* pPrev;//上一particle   
 } Particle, * pParticle;
 
-class AppMain;
+
 class CTrack;
 
 //#######################################################################
@@ -49,6 +50,7 @@ class TrainView : public QGLWidget, protected QOpenGLFunctions_4_3_Core
 {  
 	Q_OBJECT  
 public:  
+	friend class AppMain;
 	explicit TrainView(QWidget *parent = 0);  
 	~TrainView();  
 
@@ -75,8 +77,8 @@ public:
 
 	void initializeGL();
 	void initializeTexture();
-	void loadTextures();
-	void drawWater();
+
+	void PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01);
 
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
@@ -89,18 +91,20 @@ public:
 	int curve;
 	int track;
 	bool isrun;
-	bool drawnWater = 0;
+	float track_lengh;
 	Pnt3f GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type, float t);
 	Triangle* triangle;
 	Square* square;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
-	GLuint Texturess[2];
-	bool isLoadTextures = 0;
 	float t_time;
+	unsigned long lastRedraw;
+	Pnt3f train_pos;
+	Pnt3f train_dir;
+	Pnt3f train_updir;
+	bool isLoad = false;
 	unsigned int DIVIDE_LINE = 250;
-
 	typedef enum {
 
 		spline_Linear = 0,

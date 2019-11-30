@@ -40,48 +40,7 @@ void TrainView::initializeTexture()
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
 	Textures.push_back(texture);
-	texture = new QOpenGLTexture(QImage("./Textures/trainTest.jpg"));
-	Textures.push_back(texture);
 
-}
-void TrainView::loadTextures()
-{
-	
-	glClearColor(0, 0, 0, 1);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_DEPTH_TEST);
-	glGenTextures(1, &Texturess[0]);
-	glBindTexture(GL_TEXTURE_2D, Texturess[0]);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-	QImage img("./Textures/testPng.bmp");
-	if (img.isNull())cout << 0;
-	else cout << 1;
-	QImage opengl_texture = img;
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, opengl_texture.width(), opengl_texture.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, opengl_texture.bits());
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glDisable(GL_TEXTURE_2D);
-}
-void TrainView::drawWater()
-{
-	//Get modelview matrix
-	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
-	//Get projection matrix
-	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
-
-	//we manage textures by Trainview class, so we modify square's render function
-	square->Begin();
-	//Active Texture
-	glActiveTexture(GL_TEXTURE0);
-	//Bind square's texture
-	Textures[0]->bind();
-	//pass texture to shader
-	square->shaderProgram->setUniformValue("Texture", 0);
-	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
-	square->Paint(ProjectionMatrex, ModelViewMatrex);
-	square->End();// glDisable(GL_TEXTURE1); glDisable(GL_TEXTURE0);
-	//glPopMatrix();
 }
 Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type,float t)
 {
@@ -146,126 +105,129 @@ Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, 
 	}
 	return Pnt3f(qt[0],qt[1],qt[2]);
 }
-
 void TrainView::drawTrain(float x)
 {
-	spline_t type_spline = (spline_t)curve;
 	Pnt3f qt, qt0, qt1, orient_t;
-	float t = 1;
-	t *= m_pTrack->points.size();
-	size_t i;
-	for (i = 0; t > 1; t -= 1)
+	if (!isLoad)
 	{
-		i++;
+		qt = m_pTrack->points[0].pos;
+		t_time = 0;
+		isLoad = true;
 	}
-
+	else
+	{
+		qt = train_pos;
+	}
 		//pos
-		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
-		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+		//Pnt3f cp_pos_p1 = train_pos;
+		//Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
 
 		// orient
-		Pnt3f cp_orient_p1 = m_pTrack->points[i].orient;
-		Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
-		switch (type_spline) {
-		case spline_Linear:
-			// Linear
-			qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
-			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
-			break;
-		}
-		/*glColor3f(1, 1, 1);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, textures[index]);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0, 0); glVertex3d(p00.x, p00.y, p00.z);
-		glTexCoord2d(1, 0); glVertex3d(p10.x, p10.y, p10.z);
-		glTexCoord2d(1, 1); glVertex3d(p11.x, p11.y, p11.z);
-		glTexCoord2d(0, 1); glVertex3d(p01.x, p01.y, p01.z);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);*/
+		//Pnt3f cp_orient_p1 = train_dir;
+		//Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		//switch (type_spline) {
+		//case spline_Linear:
+		//	// Linear
+		//	qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+		//	orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+		//	break;
+		//}
+	Pnt3f cross_t = train_dir* train_updir;
+	cross_t.normalize();
+	cross_t = cross_t * 4.0f;
 
-		glColor3f(0, 0, 0);
-		glBindTexture(GL_TEXTURE_2D, Texturess[0]);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
-		glEnd();
-		glDisable(GL_TEXTURE_2D);
-		
-		glColor3ub(0, 0, 0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
-		glEnd();
-	
+	//前
+	PrintTextures(train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir,
+		train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	//側
+	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+		train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	PrintTextures(train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	//上下
+	PrintTextures(train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir,
+		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+		train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir);
+	//後
+	PrintTextures(train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir);
+
+	//qt.x += cross_t.x;
+	//qt.y += cross_t.y;
+	//qt.z += cross_t.z;
+	//	glColor3ub(0, 0, 0);
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+	//	glEnd();
+	//	
+	//	glColor3ub(0, 0, 0);
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+	//	glEnd();
+
+	//	glColor3ub(0, 0, 0);
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+	//	glEnd();
 
 
-		glColor3ub(0, 0, 0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
-		glEnd();
+	//	glColor3ub(255, 255, 255);//旁邊
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
+	//	glEnd();
 
+	//	glColor3ub(0, 0, 0);
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
+	//	glEnd();
 
-		glColor3ub(0, 0, 0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x + 5, qt.y - 5, qt.z + 5);
-		glEnd();
-
-		glColor3ub(0, 0, 0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x + 5, qt.y + 5, qt.z + 5);
-		glEnd();
-
-		glColor3ub(0, 0, 0);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f);//左下
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
-		glTexCoord2f(1.0f, 0.0f);//右下
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
-		glTexCoord2f(1.0f, 1.0f);//右上
-		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
-		glTexCoord2f(0.0f, 1.0f);//左上
-		glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
-		glEnd();
-		
-		
-		
-
-	
-
+	//	glColor3ub(0, 0, 0);
+	//	glBegin(GL_QUADS);
+	//	glTexCoord2f(0.0f, 0.0f);//左下
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 0.0f);//右下
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
+	//	glTexCoord2f(1.0f, 1.0f);//右上
+	//	glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
+	//	glTexCoord2f(0.0f, 1.0f);//左上
+	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
+	//	glEnd();
 
 }
 void TrainView:: resetArcball()
@@ -289,26 +251,26 @@ void TrainView::drawVolcanic()
 }
 void TrainView::paintGL()
 {
-
+	
 	//*********************************************************************
 	//
 	// * Set up basic opengl informaiton
 	//
 	//**********************************************************************
-
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Set up the view port
-	glViewport(0, 0, width(), height());
+	glViewport(0,0,width(),height());
 	// clear the window, be sure to clear the Z-Buffer too
-	glClearColor(0, 0, 0.3f, 0);
-
+	glClearColor(0,0,0.3f,0);
+	
 	// we need to clear out the stencil buffer since we'll use
 	// it for shadows
 	glClearStencil(0);
 	glEnable(GL_DEPTH);
 
 	// Blayne prefers GL_DIFFUSE
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	// prepare for projection
 	glMatrixMode(GL_PROJECTION);
@@ -330,25 +292,24 @@ void TrainView::paintGL()
 	if (this->camera == 1) {
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT2);
-	}
-	else {
+	} else {
 		glEnable(GL_LIGHT1);
 		glEnable(GL_LIGHT2);
 	}
-
+	
 
 	//*********************************************************************
 	//
 	// * set the light parameters
 	//
 	//**********************************************************************
-	GLfloat lightPosition1[] = { 0,1,1,0 }; // {50, 200.0, 50, 1.0};
-	GLfloat lightPosition2[] = { 1, 0, 0, 0 };
-	GLfloat lightPosition3[] = { 0, -1, 0, 0 };
-	GLfloat yellowLight[] = { 0.5f, 0.5f, .1f, 1.0 };
-	GLfloat whiteLight[] = { 1.0f, 1.0f, 1.0f, 1.0 };
-	GLfloat blueLight[] = { .1f,.1f,.3f,1.0 };
-	GLfloat grayLight[] = { .3f, .3f, .3f, 1.0 };
+	GLfloat lightPosition1[]	= {0,1,1,0}; // {50, 200.0, 50, 1.0};
+	GLfloat lightPosition2[]	= {1, 0, 0, 0};
+	GLfloat lightPosition3[]	= {0, -1, 0, 0};
+	GLfloat yellowLight[]		= {0.5f, 0.5f, .1f, 1.0};
+	GLfloat whiteLight[]		= {1.0f, 1.0f, 1.0f, 1.0};
+	GLfloat blueLight[]			= {.1f,.1f,.3f,1.0};
+	GLfloat grayLight[]			= {.3f, .3f, .3f, 1.0};
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, whiteLight);
@@ -367,7 +328,7 @@ void TrainView::paintGL()
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
-	drawFloor(200, 10);
+	drawFloor(200,10);
 
 
 	//*********************************************************************
@@ -376,10 +337,7 @@ void TrainView::paintGL()
 	//*********************************************************************
 	glEnable(GL_LIGHTING);
 	setupObjects();
-	
-	
 
-	
 	drawStuff();
 	
 	// this time drawing is for shadows (except for top view)
@@ -396,18 +354,18 @@ void TrainView::paintGL()
 
 	//Call triangle's render function, pass ModelViewMatrex and ProjectionMatrex
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
-	drawWater();
+    
 	//we manage textures by Trainview class, so we modify square's render function
-	//square->Begin();
-	//	//Active Texture
-	//	glActiveTexture(GL_TEXTURE0);
-	//	//Bind square's texture
-	//	Textures[0]->bind();
-	//	//pass texture to shader
-	//	square->shaderProgram->setUniformValue("Texture",0);
-	//	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
-	//	square->Paint(ProjectionMatrex,ModelViewMatrex);
-	//square->End();
+	square->Begin();
+		//Active Texture
+		glActiveTexture(GL_TEXTURE0);
+		//Bind square's texture
+		Textures[0]->bind();
+		//pass texture to shader
+		square->shaderProgram->setUniformValue("Texture",0);
+		//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+		square->Paint(ProjectionMatrex,ModelViewMatrex);
+	square->End();
 }
 
 //************************************************************************
@@ -476,11 +434,6 @@ setProjection()
 
 void TrainView::drawStuff(bool doingShadows)
 {
-	if (isLoadTextures == false)
-	{
-		loadTextures();
-		isLoadTextures = 1;
-	}
 	drawVolcanic();
 	DrawParticles();
 	ProcessParticles();
@@ -508,6 +461,13 @@ void TrainView::drawStuff(bool doingShadows)
 	float percent = 1.0f / DIVIDE_LINE;
 	spline_t type_spline = (spline_t) curve;
 	//跑每個控制點
+	track_lengh = 0.0; //printf("X:%f Y:%f Z:%f \n\n", m_pTrack->points[0].pos.x, m_pTrack->points[0].pos.y, m_pTrack->points[0].pos.z);
+	for (size_t i = 0; i < m_pTrack->points.size(); ++i) {
+		//positioon
+		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+		Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+		track_lengh += pow(pow(cp_pos_p2.x - cp_pos_p1.x, 2) + pow(cp_pos_p2.y - cp_pos_p1.y, 2) + pow(cp_pos_p2.z - cp_pos_p1.z, 2), 0.5);
+	}
 	for (size_t i = 0; i < m_pTrack->points.size(); ++i)
 	{
 		// pos
@@ -578,8 +538,8 @@ void TrainView::drawStuff(bool doingShadows)
 			
 			glLineWidth(0.5);
 			glBegin(GL_LINES);
-			glVertex3f(qt0.x, qt0.y, qt0.z);
-			glVertex3f(qt1.x, qt1.y, qt1.z);
+			//glVertex3f(qt0.x, qt0.y, qt0.z);
+			//glVertex3f(qt1.x, qt1.y, qt1.z);
 			if (!doingShadows) {
 				glColor3ub(32, 32, 64);
 			}
@@ -640,11 +600,106 @@ void TrainView::drawStuff(bool doingShadows)
 		track_cumulative_dist = track_spacing;
 		
 	}
-
 #ifdef EXAMPLE_SOLUTION
 	drawTrack(this, doingShadows);
 #endif
-
+	size_t i;
+	Pnt3f qt, qt2, orient_t;
+	//positioon
+	Pnt3f cp_pos_p1;
+	Pnt3f cp_pos_p2;
+	Pnt3f cp_pos_p3;
+	Pnt3f cp_pos_p4;
+	// orient
+	Pnt3f cp_orient_p1;
+	Pnt3f cp_orient_p2;
+	Pnt3f cp_orient_p3;
+	Pnt3f cp_orient_p4;
+	if (isrun)
+	{
+		if (clock() - lastRedraw > CLOCKS_PER_SEC / 15000) {
+			//	Arc Length Parameterization 
+			float time = t_time;
+			time *= m_pTrack->points.size();
+			for (i = 0; time > 1; time -= 1)
+				i++;
+			/*//positioon
+			Pnt3f cp_pos_p1;
+			Pnt3f cp_pos_p2;*/
+			switch (type_spline) {
+			case spline_Linear:
+				cp_pos_p1 = m_pTrack->points[i].pos;
+				cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+				break;
+			case spline_CardinalCubic:
+				cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+				cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+				break;
+			case spline_CubicB_Spline:
+				cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+				cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+				break;
+			}
+			float l = pow(pow(cp_pos_p2.x - cp_pos_p1.x, 2) + pow(cp_pos_p2.y - cp_pos_p1.y, 2) + pow(cp_pos_p2.z - cp_pos_p1.z, 2), 0.5);
+			float rate = track_lengh / m_pTrack->points.size() / l;
+			//
+				t_time += (1.0 / m_pTrack->points.size() / DIVIDE_LINE) * rate;
+			//
+			if (t_time > 1.0f)
+				t_time -= 1.0f;
+			if (t_time < 0.0f)
+				t_time += 1.0f;
+			lastRedraw = clock();
+		}
+	}
+	//temp data
+	float time = t_time;
+	//Pnt3f qt, qt2, orient_t;
+	time *= m_pTrack->points.size();
+	for (i = 0; time > 1; time -= 1)
+		i++;
+	//positioon
+	cp_pos_p1 = m_pTrack->points[i].pos;
+	cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+	cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+	cp_pos_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].pos;
+	// orient
+	cp_orient_p1 = m_pTrack->points[i].orient;
+	cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+	cp_orient_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
+	cp_orient_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].orient;
+	//dt
+	float t = time;
+	int intt = time;
+	t -= intt;
+	float T = t;
+	switch (type_spline) {
+	case spline_Linear:
+		qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+		orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+		t += 1.0f / DIVIDE_LINE;
+		qt2 = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+		break;
+	case spline_CardinalCubic:
+		qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
+		orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, T);
+		T = t + 1.0f / DIVIDE_LINE;
+		qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
+		break;
+	case spline_CubicB_Spline:
+		qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
+		orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, T);
+		T = t + 1.0f / DIVIDE_LINE;
+		qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
+		break;
+	}
+	//set train
+	orient_t.normalize();
+	train_updir = orient_t;
+	orient_t = orient_t * 5;
+	train_pos = qt + orient_t;
+	train_dir = qt2 + (-1.0 * qt);
+	train_dir.normalize();
 	// draw the train
 	drawTrain(0);
 	//####################################################################
@@ -1097,6 +1152,15 @@ void ProcessParticles()
 			par = par->pNext;//更新下一粒子    
 		}
 	}
+}
+void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
+	glColor3f(0, 0, 0);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0f, 0.0f); glVertex3d(p00.x, p00.y, p00.z);
+	glTexCoord2f(1.0f, 0.0f); glVertex3d(p10.x, p10.y, p10.z);
+	glTexCoord2f(1.0f, 1.0f); glVertex3d(p11.x, p11.y, p11.z);
+	glTexCoord2f(0.0f, 1.0f); glVertex3d(p01.x, p01.y, p01.z);
+	glEnd();
 }
 
 
