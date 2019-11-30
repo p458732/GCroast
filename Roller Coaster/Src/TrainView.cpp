@@ -40,7 +40,48 @@ void TrainView::initializeTexture()
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
 	Textures.push_back(texture);
+	texture = new QOpenGLTexture(QImage("./Textures/trainTest.jpg"));
+	Textures.push_back(texture);
 
+}
+void TrainView::loadTextures()
+{
+	
+	glClearColor(0, 0, 0, 1);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	glGenTextures(1, &Texturess[0]);
+	glBindTexture(GL_TEXTURE_2D, Texturess[0]);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+	QImage img("./Textures/testPng.bmp");
+	if (img.isNull())cout << 0;
+	else cout << 1;
+	QImage opengl_texture = img;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, opengl_texture.width(), opengl_texture.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, opengl_texture.bits());
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glDisable(GL_TEXTURE_2D);
+}
+void TrainView::drawWater()
+{
+	//Get modelview matrix
+	glGetFloatv(GL_MODELVIEW_MATRIX, ModelViewMatrex);
+	//Get projection matrix
+	glGetFloatv(GL_PROJECTION_MATRIX, ProjectionMatrex);
+
+	//we manage textures by Trainview class, so we modify square's render function
+	square->Begin();
+	//Active Texture
+	glActiveTexture(GL_TEXTURE0);
+	//Bind square's texture
+	Textures[0]->bind();
+	//pass texture to shader
+	square->shaderProgram->setUniformValue("Texture", 0);
+	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	square->Paint(ProjectionMatrex, ModelViewMatrex);
+	square->End();// glDisable(GL_TEXTURE1); glDisable(GL_TEXTURE0);
+	//glPopMatrix();
 }
 Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type,float t)
 {
@@ -105,6 +146,7 @@ Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, 
 	}
 	return Pnt3f(qt[0],qt[1],qt[2]);
 }
+
 void TrainView::drawTrain(float x)
 {
 	spline_t type_spline = (spline_t)curve;
@@ -131,7 +173,19 @@ void TrainView::drawTrain(float x)
 			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
 			break;
 		}
-		glColor3ub(0, 0, 0);
+		/*glColor3f(1, 1, 1);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, textures[index]);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex3d(p00.x, p00.y, p00.z);
+		glTexCoord2d(1, 0); glVertex3d(p10.x, p10.y, p10.z);
+		glTexCoord2d(1, 1); glVertex3d(p11.x, p11.y, p11.z);
+		glTexCoord2d(0, 1); glVertex3d(p01.x, p01.y, p01.z);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);*/
+
+		glColor3f(0, 0, 0);
+		glBindTexture(GL_TEXTURE_2D, Texturess[0]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f);//左下
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z - 5);
@@ -142,6 +196,7 @@ void TrainView::drawTrain(float x)
 		glTexCoord2f(0.0f, 1.0f);//左上
 		glVertex3f(qt.x - 5, qt.y + 5, qt.z - 5);
 		glEnd();
+		glDisable(GL_TEXTURE_2D);
 		
 		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
@@ -154,6 +209,8 @@ void TrainView::drawTrain(float x)
 		glTexCoord2f(0.0f, 1.0f);//左上
 		glVertex3f(qt.x - 5, qt.y - 5, qt.z + 5);
 		glEnd();
+	
+
 
 		glColor3ub(0, 0, 0);
 		glBegin(GL_QUADS);
@@ -232,26 +289,26 @@ void TrainView::drawVolcanic()
 }
 void TrainView::paintGL()
 {
-	
+
 	//*********************************************************************
 	//
 	// * Set up basic opengl informaiton
 	//
 	//**********************************************************************
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	// Set up the view port
-	glViewport(0,0,width(),height());
+	glViewport(0, 0, width(), height());
 	// clear the window, be sure to clear the Z-Buffer too
-	glClearColor(0,0,0.3f,0);
-	
+	glClearColor(0, 0, 0.3f, 0);
+
 	// we need to clear out the stencil buffer since we'll use
 	// it for shadows
 	glClearStencil(0);
 	glEnable(GL_DEPTH);
 
 	// Blayne prefers GL_DIFFUSE
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
 	// prepare for projection
 	glMatrixMode(GL_PROJECTION);
@@ -273,24 +330,25 @@ void TrainView::paintGL()
 	if (this->camera == 1) {
 		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHT2);
-	} else {
+	}
+	else {
 		glEnable(GL_LIGHT1);
 		glEnable(GL_LIGHT2);
 	}
-	
+
 
 	//*********************************************************************
 	//
 	// * set the light parameters
 	//
 	//**********************************************************************
-	GLfloat lightPosition1[]	= {0,1,1,0}; // {50, 200.0, 50, 1.0};
-	GLfloat lightPosition2[]	= {1, 0, 0, 0};
-	GLfloat lightPosition3[]	= {0, -1, 0, 0};
-	GLfloat yellowLight[]		= {0.5f, 0.5f, .1f, 1.0};
-	GLfloat whiteLight[]		= {1.0f, 1.0f, 1.0f, 1.0};
-	GLfloat blueLight[]			= {.1f,.1f,.3f,1.0};
-	GLfloat grayLight[]			= {.3f, .3f, .3f, 1.0};
+	GLfloat lightPosition1[] = { 0,1,1,0 }; // {50, 200.0, 50, 1.0};
+	GLfloat lightPosition2[] = { 1, 0, 0, 0 };
+	GLfloat lightPosition3[] = { 0, -1, 0, 0 };
+	GLfloat yellowLight[] = { 0.5f, 0.5f, .1f, 1.0 };
+	GLfloat whiteLight[] = { 1.0f, 1.0f, 1.0f, 1.0 };
+	GLfloat blueLight[] = { .1f,.1f,.3f,1.0 };
+	GLfloat grayLight[] = { .3f, .3f, .3f, 1.0 };
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, whiteLight);
@@ -309,7 +367,7 @@ void TrainView::paintGL()
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
-	drawFloor(200,10);
+	drawFloor(200, 10);
 
 
 	//*********************************************************************
@@ -318,7 +376,10 @@ void TrainView::paintGL()
 	//*********************************************************************
 	glEnable(GL_LIGHTING);
 	setupObjects();
+	
+	
 
+	
 	drawStuff();
 	
 	// this time drawing is for shadows (except for top view)
@@ -335,18 +396,18 @@ void TrainView::paintGL()
 
 	//Call triangle's render function, pass ModelViewMatrex and ProjectionMatrex
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
-    
+	drawWater();
 	//we manage textures by Trainview class, so we modify square's render function
-	square->Begin();
-		//Active Texture
-		glActiveTexture(GL_TEXTURE0);
-		//Bind square's texture
-		Textures[0]->bind();
-		//pass texture to shader
-		square->shaderProgram->setUniformValue("Texture",0);
-		//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
-		square->Paint(ProjectionMatrex,ModelViewMatrex);
-	square->End();
+	//square->Begin();
+	//	//Active Texture
+	//	glActiveTexture(GL_TEXTURE0);
+	//	//Bind square's texture
+	//	Textures[0]->bind();
+	//	//pass texture to shader
+	//	square->shaderProgram->setUniformValue("Texture",0);
+	//	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	//	square->Paint(ProjectionMatrex,ModelViewMatrex);
+	//square->End();
 }
 
 //************************************************************************
@@ -415,6 +476,11 @@ setProjection()
 
 void TrainView::drawStuff(bool doingShadows)
 {
+	if (isLoadTextures == false)
+	{
+		loadTextures();
+		isLoadTextures = 1;
+	}
 	drawVolcanic();
 	DrawParticles();
 	ProcessParticles();

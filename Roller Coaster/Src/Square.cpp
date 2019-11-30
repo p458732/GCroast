@@ -2,6 +2,7 @@
 
 Square::Square()
 {
+	t = 0.0;
 }
 void Square::DimensionTransformation(GLfloat source[],GLfloat target[][4])
 {
@@ -16,6 +17,10 @@ void Square::DimensionTransformation(GLfloat source[],GLfloat target[][4])
 }
 void Square::Begin()
 {
+	vertices.clear();
+	uvs.clear();
+	t = t - Divided / Speed + 1.0f / Speed;
+	InitVBO();
 	//Bind the shader we want to draw with
 	shaderProgram->bind();
 	//Bind the VAO we want to draw
@@ -78,33 +83,54 @@ void Square::InitVAO()
 }
 void Square::InitVBO()
 {
-	//Set each vertex's position
-	vertices <<QVector3D(0.0f, 2.0f, -10.0f)  
-			<<QVector3D(0.0f, 2.0f, 10.0f)
-			<<QVector3D(-20.0f, 2.0f, 10.0f)
-			<<QVector3D(-20.0f, 2.0f, -10.0f);
-	// Create Buffer for position
-	vvbo.create();
-	// Bind the buffer so that it is the current active buffer
-	vvbo.bind();
-	// Since we will never change the data that we are about to pass the Buffer, we will say that the Usage Pattern is StaticDraw
-	vvbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
-	// Allocate and initialize the information
-	vvbo.allocate(vertices.constData(),vertices.size() * sizeof(QVector3D));
+	for (float i = 0.0f; i < Divided; i += 1.0f) {
+		//set wave height
+		float w = 2.0f * M_PI / Wavelength;
+		float theta = w * Speed;
+		float height = H + Amplitude * sin(t * theta);
+		t += 1.0f / Speed;
+		//j->x
+		for (float j = 0.0f; j < Divided; j += 1.0f) {
+			//Set each vertex's position
 
-	//Set each vertex's uv
-	uvs<<QVector2D(0.0f,0.0f)
-		<<QVector2D(0.0f,1.0f)
-		<<QVector2D(1.0f,1.0f)
-		<<QVector2D(1.0f,.0f);
-	// Create Buffer for uv
-	uvbo.create();
-	// Bind the buffer so that it is the current active buffer
-	uvbo.bind();
-	// Since we will never change the data that we are about to pass the Buffer, we will say that the Usage Pattern is StaticDraw
-	uvbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
-	// Allocate and initialize the information
-	uvbo.allocate(uvs.constData(),uvs.size() * sizeof(QVector2D));
+			/*vertices << QVector3D(0.0f, 2.0f, -10.0f)
+				<< QVector3D(0.0f, 2.0f, 10.0f)
+				<< QVector3D(-20.0f, 2.0f, 10.0f)
+				<< QVector3D(-20.0f, 2.0f, -10.0f);*/
+			vertices << QVector3D(x1 + dx * j, height, z1 + dz * i)
+				<< QVector3D(x2 - dx * (Divided - j - 1.0f), height, z1 + dz * i)
+				<< QVector3D(x2 - dx * (Divided - j - 1.0f), height, z2 - dz * (Divided - i - 1.0f))
+				<< QVector3D(x1 + dx * j, height, z2 - dz * (Divided - i - 1.0f));
+			// Create Buffer for position
+			vvbo.create();
+			// Bind the buffer so that it is the current active buffer
+			vvbo.bind();
+			// Since we will never change the data that we are about to pass the Buffer, we will say that the Usage Pattern is StaticDraw
+			vvbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+			// Allocate and initialize the information
+			vvbo.allocate(vertices.constData(), vertices.size() * sizeof(QVector3D));
+
+			//Set each vertex's uv
+
+		/*	uvs << QVector2D(0.0f, 0.0f)
+				<< QVector2D(0.0f, 1.0f)
+				<< QVector2D(1.0f, 1.0f)
+				<< QVector2D(1.0f, .0f);*/
+
+			uvs << QVector2D(0.0f + duv * j, 0.0f + duv * i)
+				<< QVector2D(1.0f - duv * (Divided - j - 1.0f), 0.0f + duv * i)
+				<< QVector2D(1.0f - duv * (Divided - j - 1.0f), 1.0f - duv * (Divided - i - 1.0f))
+				<< QVector2D(0.0f + duv * j, 1.0f - duv * (Divided - i - 1.0f));
+			// Create Buffer for uv
+			uvbo.create();
+			// Bind the buffer so that it is the current active buffer
+			uvbo.bind();
+			// Since we will never change the data that we are about to pass the Buffer, we will say that the Usage Pattern is StaticDraw
+			uvbo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+			// Allocate and initialize the information
+			uvbo.allocate(uvs.constData(), uvs.size() * sizeof(QVector2D));
+		}
+	}
 
 }
 void Square::InitShader(QString vertexShaderPath,QString fragmentShaderPath)

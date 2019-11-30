@@ -75,7 +75,8 @@ public:
 
 	void initializeGL();
 	void initializeTexture();
-
+	void loadTextures();
+	void drawWater();
 
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
@@ -88,12 +89,15 @@ public:
 	int curve;
 	int track;
 	bool isrun;
+	bool drawnWater = 0;
 	Pnt3f GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type, float t);
 	Triangle* triangle;
 	Square* square;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
+	GLuint Texturess[2];
+	bool isLoadTextures = 0;
 	float t_time;
 	unsigned int DIVIDE_LINE = 250;
 

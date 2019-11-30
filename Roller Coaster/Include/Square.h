@@ -37,4 +37,20 @@ public:
 	void Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix);
 	void End();
 
+	float Divided = 30.0f;
+	float x1 = -60.0f, x2 = 60.0f, z1 = -60.0f, z2 = 60.0f;
+	float dx = (x2 - x1) / Divided, dz = (z2 - z1) / Divided;
+	float duv = 1.0f / Divided;
+	//wave
+	//振幅
+	float Amplitude = 18.0f;
+	//波長
+	float Wavelength = 50.0f;
+	//速度
+	float Speed = 2.5f;
+	//基準高度
+	float H = -20.0f;
+	//time
+	float t;
+
 };
