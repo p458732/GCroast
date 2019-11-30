@@ -1,5 +1,4 @@
 #include "AppMain.h"
-
 #include "Utilities/3DUtils.H"
 #include "Track.H"
 #include <math.h>
@@ -483,22 +482,17 @@ advanceTrain(float dir)
 	// TODO: make this work for your train
 	//#####################################################################+
 	dir = 1;
-	
 
 	trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
 	if (trainview->t_time > 1.0f)
 		trainview->t_time -= 1.0f;
 	if (this->trainview->isrun) {
 		if (clock() - lastRedraw > CLOCKS_PER_SEC / 30) {
+			trainview->drawTrain(0);
 			lastRedraw = clock();
-			this->damageMe();
 			this->advanceTrain();
-			
+			this->damageMe();
 		}
 	}
-	
-	
-
-
 
 }
