@@ -44,7 +44,7 @@ void TrainView::initializeTexture()
 }
 Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type,float t)
 {
-	
+	tau = tautau;
 	float Gmartix[3][4] = {
 		con1.x,con2.x,con3.x,con4.x,
 		con1.y,con2.y,con3.y,con4.y,

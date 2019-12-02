@@ -78,6 +78,7 @@ private:
 
 		void SwitchPlayAndPause();
 		void ChangeSpeedOfTrain( int val );
+		void ChangeTauOf(int val);
 
 		void AddControlPoint();
 		void DeleteControlPoint();

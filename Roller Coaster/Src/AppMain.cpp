@@ -44,6 +44,7 @@ AppMain::AppMain(QWidget *parent)
 
 	connect( ui.bPlay		,SIGNAL(clicked()),this,SLOT(SwitchPlayAndPause())				);
 	connect( ui.sSpeed		,SIGNAL(valueChanged(int)),this,SLOT(ChangeSpeedOfTrain(int))	);
+	connect(ui.tautautau, SIGNAL(valueChanged(int)), this, SLOT(ChangeTauOf(int)));
 	connect( ui.bAdd		,SIGNAL(clicked()),this,SLOT(AddControlPoint())					);
 	connect( ui.bDelete		,SIGNAL(clicked()),this,SLOT(DeleteControlPoint())				);
 
@@ -301,6 +302,11 @@ void AppMain::SwitchPlayAndPause()
 void AppMain::ChangeSpeedOfTrain( int val )
 {
 	this->trainview->trainSpeed = 1000 * float(val) / 100.0f;
+}
+
+void AppMain::ChangeTauOf(int val)
+{
+	this->trainview->tautau = float(val) / 25.0f;
 }
 
 void AppMain::AddControlPoint()
