@@ -592,10 +592,7 @@ void TrainView::drawStuff(bool doingShadows)
 				glVertex3f(qt0.x - cross_t.x * 2.0, qt0.y - cross_t.y * 2.0, qt0.z - cross_t.z * 2.0);
 				glEnd();
 			}
-			glEnd();
-
-			
-
+			//glEnd();
 		}
 		track_cumulative_dist = track_spacing;
 		
@@ -617,7 +614,7 @@ void TrainView::drawStuff(bool doingShadows)
 	Pnt3f cp_orient_p4;
 	if (isrun)
 	{
-		if (clock() - lastRedraw > CLOCKS_PER_SEC / 15000) {
+		if (clock() - lastRedraw > CLOCKS_PER_SEC / trainSpeed) {
 			//	Arc Length Parameterization 
 			float time = t_time;
 			time *= m_pTrack->points.size();
