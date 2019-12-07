@@ -107,9 +107,8 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
 			glGetDoublev(GL_PROJECTION_MATRIX,mat2);
 
 			int y = viewport[3] - iy; // originally had an extra -1?
-
-			int i1 = gluUnProject((double) x, (double) y, .25, mat1, mat2, viewport, &r1x, &r1y, &r1z);
-			int i2 = gluUnProject((double) x, (double) y, .75, mat1, mat2, viewport, &r2x, &r2y, &r2z);
+			int i1 = gluUnProject((double) x, (double) y, -1, mat1, mat2, viewport, &r1x, &r1y, &r1z);
+			int i2 = gluUnProject((double) x, (double) y, 0.75, mat1, mat2, viewport, &r2x, &r2y, &r2z);
 
 			double rx, ry, rz;
 			mousePoleGo(r1x, r1y, r1z, r2x, r2y, r2z, 
