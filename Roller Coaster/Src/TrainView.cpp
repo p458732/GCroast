@@ -384,15 +384,32 @@ setProjection()
 	// Check whether we use the world camp
 	if (this->camera == 0){
 		arcball.setProjection(false);
+		glBegin(GL_LINES);
+		glColor3f(255, 0, 0);
+		
+		Pnt3f cross_t = train_dir * train_updir;
+		cross_t.normalize();
+		cross_t = cross_t * 4.0f;
+		float test = 0.0;
+		float testX = train_pos.x + cross_t.x + (9) * train_dir.x + (8) * train_updir.x;
+		float testY = train_pos.y + cross_t.y + (9) * train_dir.y + (8) * train_updir.y;
+		float testZ = train_pos.z + cross_t.z + (9) * train_dir.z + (8) * train_updir.z;
+		glVertex3d(testX, testY, testZ);
+		glVertex3d(testX + train_dir.x * 10 + (-8) * train_updir.x, testY + train_dir.y * 10 + (-8) * train_updir.y, testZ + train_dir.z * 10 + (-8) * train_updir.z);
+		glEnd();
 		update();
+
 	// Or we use the top cam
-	}else if (this->camera == 1) {
+	}
+	else if (this->camera == 1)
+	{
 		float wi, he;
 		if (aspect >= 1) {
 			wi = 110;
 			he = wi / aspect;
 		} 
-		else {
+		else 
+		{
 			he = 110;
 			wi = he * aspect;
 		}
@@ -405,7 +422,29 @@ setProjection()
 		glLoadIdentity();
 		glRotatef(-90,1,0,0);
 		update();
-	} 
+	}
+	else if (this->camera == 2)
+	{
+		//train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(60.0,1, 0.01, 300);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		Pnt3f cross_t = train_dir * train_updir;
+		cross_t.normalize();
+		cross_t = cross_t * 4.0f;
+		float test = 0.0;
+		float testX = train_pos.x + cross_t.x + (10) * train_dir.x + (8) * train_updir.x;
+		float testY = train_pos.y + cross_t.y + (10) * train_dir.y + (8) * train_updir.y;
+		float testZ = train_pos.z + cross_t.z + (10) * train_dir.z + (8) * train_updir.z;
+		gluLookAt(testX, testY, testZ,
+			testX + train_dir.x   , testY + train_dir.y  , testZ + train_dir.z ,
+			train_updir.x, train_updir.y, train_updir.z);
+		
+		update();
+	}
+
 	// Or do the train view or other view here
 	//####################################################################
 	// TODO: 

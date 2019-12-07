@@ -59,7 +59,8 @@ public:
 	// overrides of important window things
 	//virtual int handle(int);
 	virtual void paintGL();
-	Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));
+	//Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));火山
+	Model* m = new Model("D://arrow.obj", 100, Point3d(0, 0, 0));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
