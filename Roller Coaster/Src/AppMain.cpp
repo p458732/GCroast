@@ -52,6 +52,9 @@ AppMain::AppMain(QWidget *parent)
 	connect( ui.rcpxsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubX())				);
 	connect( ui.rcpzadd		,SIGNAL(clicked()),this,SLOT(RotateControlPointAddZ())					);
 	connect( ui.rcpzsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubZ())				);
+
+	connect(ui.addcar ,SIGNAL(clicked()), this, SLOT(addcar()));
+	connect(ui.deletecar, SIGNAL(clicked()), this, SLOT(deletecar()));
 }
 
 AppMain::~AppMain()
@@ -395,6 +398,26 @@ void AppMain::RotateControlPointSubZ()
 	rollz(-1);
 }
 
+void AppMain::addcar()
+{
+	this->trainview->t_time.push_back(0.0f);
+	this->trainview->train_pos.push_back(Pnt3f(0, 0, 0));
+	this->trainview->train_dir.push_back(Pnt3f(0, 0, 0));
+	this->trainview->train_updir.push_back(Pnt3f(0, 1, 0));
+	this->trainview->subcar++;
+}
+
+void AppMain::deletecar()
+{
+	if (this->trainview->subcar > 0) {
+		this->trainview->train_pos.pop_back();
+		this->trainview->train_dir.pop_back();
+		this->trainview->train_updir.pop_back();
+		this->trainview->t_time.pop_back();
+		this->trainview->subcar--;
+	}
+}
+
 void AppMain::ChangeCamToWorld()
 {
 	this->trainview->camera = 0;
@@ -488,7 +511,7 @@ advanceTrain(float dir)
 	//#####################################################################+
 	dir = 1;
 
-	trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
+	/*trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
 	if (trainview->t_time > 1.0f)
 		trainview->t_time -= 1.0f;
 	if (this->trainview->isrun) {
@@ -498,6 +521,6 @@ advanceTrain(float dir)
 			this->advanceTrain();
 			this->damageMe();
 		}
-	}
+	}*/
 
 }

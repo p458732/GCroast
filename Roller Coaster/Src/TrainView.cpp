@@ -108,22 +108,13 @@ Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, 
 void TrainView::drawTrain(float x)
 {
 	Pnt3f qt, qt0, qt1, orient_t;
-	if (!isLoad)
-	{
-		qt = m_pTrack->points[0].pos;
-		t_time = 0;
-		isLoad = true;
-	}
-	else
-	{
-		qt = train_pos;
-	}
+		qt = train_pos[0];
 		//pos
-		//Pnt3f cp_pos_p1 = train_pos;
+		//Pnt3f cp_pos_p1 = train_pos[0];
 		//Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
 
 		// orient
-		//Pnt3f cp_orient_p1 = train_dir;
+		//Pnt3f cp_orient_p1 = train_dir[0];
 		//Pnt3f cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
 		//switch (type_spline) {
 		//case spline_Linear:
@@ -132,27 +123,56 @@ void TrainView::drawTrain(float x)
 		//	orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
 		//	break;
 		//}
-	Pnt3f cross_t = train_dir* train_updir;
+	Pnt3f cross_t = train_dir[0]* train_updir[0];
 	cross_t.normalize();
 	cross_t = cross_t * 4.0f;
 
 	//前
-	PrintTextures(train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir,
-		train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	PrintTextures(train_pos[0] + cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0], train_pos[0] + cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
 	//側
-	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	PrintTextures(train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
+	PrintTextures(train_pos[0] + (1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
 	//上下
-	PrintTextures(train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir);
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0],
+		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0]);
 	//後
-	PrintTextures(train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir);
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0]);
 
+	if(subcar != 0)
+	for (int i = 1; i < subcar + 1; i++) {
+		Pnt3f cross_t = train_dir[i] * train_updir[i];
+		cross_t.normalize();
+		cross_t = cross_t * 4.0f;
+		//連結線
+		glLineWidth(20);
+		glBegin(GL_LINES);
+		glVertex3f(train_pos[i - 1].x + (-8) * train_dir[i - 1].x, train_pos[i - 1].y + (-8) * train_dir[i - 1].y, train_pos[i - 1].z + (-8) * train_dir[i - 1].z);
+		glVertex3f(train_pos[i].x + (8) * train_dir[i].x, train_pos[i].y + (8) * train_dir[i].y, train_pos[i].z + (8) * train_dir[i].z);
+		glEnd();
+		//車廂
+			//前
+		PrintTextures(train_pos[i] + cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
+		//側
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
+		PrintTextures(train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
+		//上下
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i]);
+		//後
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i]);
+	}
 	//qt.x += cross_t.x;
 	//qt.y += cross_t.y;
 	//qt.z += cross_t.z;
@@ -329,8 +349,16 @@ void TrainView::paintGL()
 	setupFloor();
 	glDisable(GL_LIGHTING);
 	drawFloor(200,10);
-
-
+	/////////////////////////////////////////////////////
+	if (!isLoad)
+	{
+		t_time.push_back(0.0f);
+		train_pos.push_back(Pnt3f(0, 0, 0));
+		train_dir.push_back(Pnt3f(0, 0, 0));
+		train_updir.push_back(Pnt3f(0, 1, 0));
+		isLoad = true;
+	}
+	/////////////////////////////////////////////////////
 	//*********************************************************************
 	// now draw the object and we need to do it twice
 	// once for real, and then once for shadows
@@ -412,22 +440,22 @@ setProjection()
 	}
 	else if (this->camera == 2)
 	{
-		//train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir
+		//train_pos[0] + cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0]
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective(60.0,1, 0.01, 300);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		Pnt3f cross_t = train_dir * train_updir;
+		Pnt3f cross_t = train_dir[0] * train_updir[0];
 		cross_t.normalize();
 		cross_t = cross_t * 4.0f;
 		float test = 0.0;
-		float testX = train_pos.x + cross_t.x + (10) * train_dir.x + (8) * train_updir.x;
-		float testY = train_pos.y + cross_t.y + (10) * train_dir.y + (8) * train_updir.y;
-		float testZ = train_pos.z + cross_t.z + (10) * train_dir.z + (8) * train_updir.z;
+		float testX = train_pos[0].x + cross_t.x + (10) * train_dir[0].x + (8) * train_updir[0].x;
+		float testY = train_pos[0].y + cross_t.y + (10) * train_dir[0].y + (8) * train_updir[0].y;
+		float testZ = train_pos[0].z + cross_t.z + (10) * train_dir[0].z + (8) * train_updir[0].z;
 		gluLookAt(testX, testY, testZ,
-			testX + train_dir.x*2   , testY + train_dir.y*2  , testZ + train_dir.z*2 ,
-			train_updir.x, train_updir.y, train_updir.z);
+			testX + train_dir[0].x*2   , testY + train_dir[0].y*2  , testZ + train_dir[0].z*2 ,
+			train_updir[0].x, train_updir[0].y, train_updir[0].z);
 		
 		update();
 	}
@@ -487,7 +515,7 @@ void TrainView::drawStuff(bool doingShadows)
 	float percent = 1.0f / DIVIDE_LINE;
 	spline_t type_spline = (spline_t) curve;
 	//跑每個控制點
-	track_lengh = 0.0; //printf("X:%f Y:%f Z:%f \n\n", m_pTrack->points[0].pos.x, m_pTrack->points[0].pos.y, m_pTrack->points[0].pos.z);
+	track_lengh = 0.0; 
 	for (size_t i = 0; i < m_pTrack->points.size(); ++i) {
 		//positioon
 		Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
@@ -638,91 +666,131 @@ void TrainView::drawStuff(bool doingShadows)
 	Pnt3f cp_orient_p2;
 	Pnt3f cp_orient_p3;
 	Pnt3f cp_orient_p4;
-	if (isrun)
+	for (int num = 0; num < subcar + 1; num++)
 	{
-		if (clock() - lastRedraw > CLOCKS_PER_SEC / trainSpeed) {
-			//	Arc Length Parameterization 
-			float time = t_time;
-			time *= m_pTrack->points.size();
-			for (i = 0; time > 1; time -= 1)
-				i++;
-			/*//positioon
-			Pnt3f cp_pos_p1;
-			Pnt3f cp_pos_p2;*/
-			switch (type_spline) {
-			case spline_Linear:
-				cp_pos_p1 = m_pTrack->points[i].pos;
-				cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-				break;
-			case spline_CardinalCubic:
-				cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-				cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-				break;
-			case spline_CubicB_Spline:
-				cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-				cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-				break;
+		if (isrun && num == 0)
+		{
+			if (clock() - lastRedraw > CLOCKS_PER_SEC / trainSpeed) {
+				//	Arc Length Parameterization 
+				float time = t_time[0];
+				time *= m_pTrack->points.size();
+				for (i = 0; time > 1; time -= 1)
+					i++;
+				/*//positioon
+				Pnt3f cp_pos_p1;
+				Pnt3f cp_pos_p2;*/
+				switch (type_spline) {
+				case spline_Linear:
+					cp_pos_p1 = m_pTrack->points[i].pos;
+					cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+					break;
+				case spline_CardinalCubic:
+					cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+					cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+					break;
+				case spline_CubicB_Spline:
+					cp_pos_p1 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+					cp_pos_p2 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+					break;
+				}
+				float l = pow(pow(cp_pos_p2.x - cp_pos_p1.x, 2) + pow(cp_pos_p2.y - cp_pos_p1.y, 2) + pow(cp_pos_p2.z - cp_pos_p1.z, 2), 0.5);
+				float rate = track_lengh / m_pTrack->points.size() / l;
+				//
+				t_time[0] += (1.0 / m_pTrack->points.size() / DIVIDE_LINE) * rate;
+				//
+				if (t_time[0] > 1.0f)
+					t_time[0] -= 1.0f;
+				if (t_time[0] < 0.0f)
+					t_time[0] += 1.0f;
+				lastRedraw = clock();
 			}
-			float l = pow(pow(cp_pos_p2.x - cp_pos_p1.x, 2) + pow(cp_pos_p2.y - cp_pos_p1.y, 2) + pow(cp_pos_p2.z - cp_pos_p1.z, 2), 0.5);
-			float rate = track_lengh / m_pTrack->points.size() / l;
-			//
-				t_time += (1.0 / m_pTrack->points.size() / DIVIDE_LINE) * rate;
-			//
-			if (t_time > 1.0f)
-				t_time -= 1.0f;
-			if (t_time < 0.0f)
-				t_time += 1.0f;
-			lastRedraw = clock();
 		}
+		else if(num != 0)
+		{
+			t_time[num] = t_time[num - 1];
+			for (float d = 0.0; d < 15.9;) {
+				t_time[num] += -0.01f * 280.0 / track_lengh;
+				if (t_time[num] < 0.0f)
+					t_time[num] += 1.0f;
+				float time = t_time[num];
+				time *= m_pTrack->points.size();
+				for (i = 0; time > 1; time -= 1)
+					i++;
+				Pnt3f qt;
+				//positioon
+				Pnt3f cp_pos_p1 = m_pTrack->points[i].pos;
+				Pnt3f cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+				Pnt3f cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+				Pnt3f cp_pos_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].pos;
+				//dt
+				float t = time;
+				int intt = time;
+				t -= intt;
+				switch (type_spline) {
+				case spline_Linear:
+					qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+					break;
+				case spline_CardinalCubic:
+					orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, t);
+					break;
+				case spline_CubicB_Spline:
+					orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, t);
+					break;
+				}
+				d = pow(pow(train_pos[num - 1].x - qt.x, 2) + pow(train_pos[num - 1].y - qt.y, 2) + pow(train_pos[num - 1].z - qt.z, 2), 0.5f);
+			}
+		}
+		//temp data
+		float time = t_time[num];
+		//Pnt3f qt, qt2, orient_t;
+		time *= m_pTrack->points.size();
+		for (i = 0; time > 1; time -= 1)
+			i++;
+		//positioon
+		cp_pos_p1 = m_pTrack->points[i].pos;
+		cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
+		cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
+		cp_pos_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].pos;
+		// orient
+		cp_orient_p1 = m_pTrack->points[i].orient;
+		cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
+		cp_orient_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
+		cp_orient_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].orient;
+		//dt
+		float t = time;
+		int intt = time;
+		t -= intt;
+		float T = t;
+		switch (type_spline) {
+		case spline_Linear:
+			qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+			orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
+			t += 1.0f / DIVIDE_LINE;
+			qt2 = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
+			break;
+		case spline_CardinalCubic:
+			qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
+			orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, T);
+			T = t + 1.0f / DIVIDE_LINE;
+			qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
+			break;
+		case spline_CubicB_Spline:
+			qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
+			orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, T);
+			T = t + 1.0f / DIVIDE_LINE;
+			qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
+			break;
+		}
+		//set train
+		orient_t.normalize();
+		train_updir[num] = orient_t;
+		orient_t = orient_t * 5;
+		train_pos[num] = qt + orient_t;
+		train_dir[num] = qt2 + (-1.0 * qt);
+		train_dir[num].normalize();
 	}
-	//temp data
-	float time = t_time;
-	//Pnt3f qt, qt2, orient_t;
-	time *= m_pTrack->points.size();
-	for (i = 0; time > 1; time -= 1)
-		i++;
-	//positioon
-	cp_pos_p1 = m_pTrack->points[i].pos;
-	cp_pos_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].pos;
-	cp_pos_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].pos;
-	cp_pos_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].pos;
-	// orient
-	cp_orient_p1 = m_pTrack->points[i].orient;
-	cp_orient_p2 = m_pTrack->points[(i + 1) % m_pTrack->points.size()].orient;
-	cp_orient_p3 = m_pTrack->points[(i + 2) % m_pTrack->points.size()].orient;
-	cp_orient_p4 = m_pTrack->points[(i + 3) % m_pTrack->points.size()].orient;
-	//dt
-	float t = time;
-	int intt = time;
-	t -= intt;
-	float T = t;
-	switch (type_spline) {
-	case spline_Linear:
-		qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
-		orient_t = (1 - t) * cp_orient_p1 + t * cp_orient_p2;
-		t += 1.0f / DIVIDE_LINE;
-		qt2 = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
-		break;
-	case spline_CardinalCubic:
-		qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
-		orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, T);
-		T = t + 1.0f / DIVIDE_LINE;
-		qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 1, T);
-		break;
-	case spline_CubicB_Spline:
-		qt = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
-		orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, T);
-		T = t + 1.0f / DIVIDE_LINE;
-		qt2 = GMT(2, cp_pos_p1, cp_pos_p2, cp_pos_p3, cp_pos_p4, 2, T);
-		break;
-	}
-	//set train
-	orient_t.normalize();
-	train_updir = orient_t;
-	orient_t = orient_t * 5;
-	train_pos = qt + orient_t;
-	train_dir = qt2 + (-1.0 * qt);
-	train_dir.normalize();
+	
+	
 	// draw the train
 	drawTrain(0);
 	//####################################################################
@@ -1184,6 +1252,16 @@ void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
 	glTexCoord2f(1.0f, 1.0f); glVertex3d(p11.x, p11.y, p11.z);
 	glTexCoord2f(0.0f, 1.0f); glVertex3d(p01.x, p01.y, p01.z);
 	glEnd();
+	//glColor3f(1, 1, 1);
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, textures[index]);
+	//glBegin(GL_QUADS);
+	//glTexCoord2d(0, 0); glVertex3d(p00.x, p00.y, p00.z);
+	//glTexCoord2d(1, 0); glVertex3d(p10.x, p10.y, p10.z);
+	//glTexCoord2d(1, 1); glVertex3d(p11.x, p11.y, p11.z);
+	//glTexCoord2d(0, 1); glVertex3d(p01.x, p01.y, p01.z);
+	//glEnd();
+	//glDisable(GL_TEXTURE_2D);
 }
 
 
