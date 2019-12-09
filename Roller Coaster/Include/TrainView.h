@@ -99,6 +99,7 @@ public:
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
 	float t_time;
+	GLuint texturesGlu[25];
 	unsigned long lastRedraw;
 	Pnt3f train_pos;
 	Pnt3f train_dir;

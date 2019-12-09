@@ -137,21 +137,21 @@ void TrainView::drawTrain(float x)
 	cross_t = cross_t * 4.0f;
 
 	//前
-	PrintTextures(train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir,
-		train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	//側
-	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	PrintTextures(train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	//上下
-	PrintTextures(train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
-	PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir);
-	//後
-	PrintTextures(train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
-		train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir);
+	//PrintTextures(train_pos + cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir,
+	//	train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	////側
+	//PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+	//	train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	//PrintTextures(train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+	//	train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	////上下
+	//PrintTextures(train_pos + (-1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir,
+	//	train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (1.0) * cross_t + (5) * train_dir + (4) * train_dir + (8) * train_updir);
+	//PrintTextures(train_pos + (-1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+	//	train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (8) * train_dir + (4) * train_dir + (-3) * train_updir);
+	////後
+	//PrintTextures(train_pos + (-1.0) * cross_t + (-8) * train_dir + (-3) * train_updir, train_pos + (1.0) * cross_t + (-8) * train_dir + (-3) * train_updir,
+	//	train_pos + (1.0) * cross_t + (-8) * train_dir + (8) * train_updir, train_pos + (-1.0) * cross_t + (-8) * train_dir + (8) * train_updir);
 
 	//qt.x += cross_t.x;
 	//qt.y += cross_t.y;
@@ -406,6 +406,16 @@ setProjection()
 		glRotatef(-90,1,0,0);
 		update();
 	} 
+	else if (this->camera == 2) {
+		glMatrixMode(GL_PROJECTION);
+		gluPerspective(120, 1, 1, 2000);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		gluLookAt(train_pos.x + train_updir.x * 6, train_pos.y + train_updir.y * 6, train_pos.z + train_updir.z * 6,
+			train_pos.x + train_updir.x * 6 + train_dir.x * 6, train_pos.y + train_updir.y * 6 + train_dir.y * 6, train_pos.z + train_updir.z * 6 + train_dir.z * 6,
+			train_updir.x, train_updir.y, train_updir.z);
+		update();
+	}
 	// Or do the train view or other view here
 	//####################################################################
 	// TODO: 
@@ -415,6 +425,7 @@ setProjection()
 #ifdef EXAMPLE_SOLUTION
 		trainCamView(this,aspect);
 #endif
+
 		update();
 	}
 }
@@ -592,8 +603,7 @@ void TrainView::drawStuff(bool doingShadows)
 				glVertex3f(qt0.x - cross_t.x * 2.0, qt0.y - cross_t.y * 2.0, qt0.z - cross_t.z * 2.0);
 				glEnd();
 			}
-			glEnd();
-
+			
 			
 
 		}
@@ -1154,13 +1164,24 @@ void ProcessParticles()
 	}
 }
 void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
-	glColor3f(0, 0, 0);
+	/*glColor3f(0, 0, 0);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f); glVertex3d(p00.x, p00.y, p00.z);
 	glTexCoord2f(1.0f, 0.0f); glVertex3d(p10.x, p10.y, p10.z);
 	glTexCoord2f(1.0f, 1.0f); glVertex3d(p11.x, p11.y, p11.z);
 	glTexCoord2f(0.0f, 1.0f); glVertex3d(p01.x, p01.y, p01.z);
+	glEnd();*/
+
+	glColor3f(1, 1, 1);
+	glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, );
+	glBegin(GL_QUADS);
+	glTexCoord2d(0, 0); glVertex3d(p00.x, p00.y, p00.z);
+	glTexCoord2d(1, 0); glVertex3d(p10.x, p10.y, p10.z);
+	glTexCoord2d(1, 1); glVertex3d(p11.x, p11.y, p11.z);
+	glTexCoord2d(0, 1); glVertex3d(p01.x, p01.y, p01.z);
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
 }
 
 
