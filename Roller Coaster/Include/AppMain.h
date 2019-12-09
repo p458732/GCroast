@@ -78,6 +78,7 @@ private:
 
 		void SwitchPlayAndPause();
 		void ChangeSpeedOfTrain( int val );
+		void ChangeTauOf(int val);
 
 		void AddControlPoint();
 		void DeleteControlPoint();
@@ -86,6 +87,9 @@ private:
 		void RotateControlPointSubX();
 		void RotateControlPointAddZ();
 		void RotateControlPointSubZ();
+
+		void addcar();
+		void deletecar();
 
 protected:
 	bool eventFilter(QObject *watched, QEvent *e); 

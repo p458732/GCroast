@@ -44,6 +44,7 @@ AppMain::AppMain(QWidget *parent)
 
 	connect( ui.bPlay		,SIGNAL(clicked()),this,SLOT(SwitchPlayAndPause())				);
 	connect( ui.sSpeed		,SIGNAL(valueChanged(int)),this,SLOT(ChangeSpeedOfTrain(int))	);
+	connect(ui.tautautau, SIGNAL(valueChanged(int)), this, SLOT(ChangeTauOf(int)));
 	connect( ui.bAdd		,SIGNAL(clicked()),this,SLOT(AddControlPoint())					);
 	connect( ui.bDelete		,SIGNAL(clicked()),this,SLOT(DeleteControlPoint())				);
 
@@ -51,6 +52,9 @@ AppMain::AppMain(QWidget *parent)
 	connect( ui.rcpxsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubX())				);
 	connect( ui.rcpzadd		,SIGNAL(clicked()),this,SLOT(RotateControlPointAddZ())					);
 	connect( ui.rcpzsub		,SIGNAL(clicked()),this,SLOT(RotateControlPointSubZ())				);
+
+	connect(ui.addcar ,SIGNAL(clicked()), this, SLOT(addcar()));
+	connect(ui.deletecar, SIGNAL(clicked()), this, SLOT(deletecar()));
 }
 
 AppMain::~AppMain()
@@ -106,9 +110,8 @@ bool AppMain::eventFilter(QObject *watched, QEvent *e) {
 			glGetDoublev(GL_PROJECTION_MATRIX,mat2);
 
 			int y = viewport[3] - iy; // originally had an extra -1?
-
-			int i1 = gluUnProject((double) x, (double) y, .25, mat1, mat2, viewport, &r1x, &r1y, &r1z);
-			int i2 = gluUnProject((double) x, (double) y, .75, mat1, mat2, viewport, &r2x, &r2y, &r2z);
+			int i1 = gluUnProject((double) x, (double) y, -1, mat1, mat2, viewport, &r1x, &r1y, &r1z);
+			int i2 = gluUnProject((double) x, (double) y, 0.75, mat1, mat2, viewport, &r2x, &r2y, &r2z);
 
 			double rx, ry, rz;
 			mousePoleGo(r1x, r1y, r1z, r2x, r2y, r2z, 
@@ -300,7 +303,12 @@ void AppMain::SwitchPlayAndPause()
 
 void AppMain::ChangeSpeedOfTrain( int val )
 {
-	//m_rollerCoaster->trainSpeed = m_rollerCoaster->MAX_TRAIN_SPEED * float(val) / 100.0f;
+	this->trainview->trainSpeed = 1000 * float(val) / 100.0f;
+}
+
+void AppMain::ChangeTauOf(int val)
+{
+	this->trainview->tautau = float(val) / 25.0f;
 }
 
 void AppMain::AddControlPoint()
@@ -388,6 +396,26 @@ void AppMain::RotateControlPointAddZ()
 void AppMain::RotateControlPointSubZ()
 {
 	rollz(-1);
+}
+
+void AppMain::addcar()
+{
+	this->trainview->t_time.push_back(0.0f);
+	this->trainview->train_pos.push_back(Pnt3f(0, 0, 0));
+	this->trainview->train_dir.push_back(Pnt3f(0, 0, 0));
+	this->trainview->train_updir.push_back(Pnt3f(0, 1, 0));
+	this->trainview->subcar++;
+}
+
+void AppMain::deletecar()
+{
+	if (this->trainview->subcar > 0) {
+		this->trainview->train_pos.pop_back();
+		this->trainview->train_dir.pop_back();
+		this->trainview->train_updir.pop_back();
+		this->trainview->t_time.pop_back();
+		this->trainview->subcar--;
+	}
 }
 
 void AppMain::ChangeCamToWorld()
@@ -483,7 +511,7 @@ advanceTrain(float dir)
 	//#####################################################################+
 	dir = 1;
 
-	trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
+	/*trainview->t_time += (dir / m_Track.points.size() / (trainview->DIVIDE_LINE / 40));
 	if (trainview->t_time > 1.0f)
 		trainview->t_time -= 1.0f;
 	if (this->trainview->isrun) {
@@ -493,6 +521,6 @@ advanceTrain(float dir)
 			this->advanceTrain();
 			this->damageMe();
 		}
-	}
+	}*/
 
 }

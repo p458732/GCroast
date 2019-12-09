@@ -59,7 +59,8 @@ public:
 	// overrides of important window things
 	//virtual int handle(int);
 	virtual void paintGL();
-	Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));
+	//Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));火山
+	Model* m = new Model("D://arrow.obj", 100, Point3d(0, 0, 0));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
@@ -92,18 +93,20 @@ public:
 	int track;
 	bool isrun;
 	float track_lengh;
+	float trainSpeed = 500;
+	float tautau = 2;
+	int subcar = 0;
 	Pnt3f GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type, float t);
 	Triangle* triangle;
 	Square* square;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
-	float t_time;
-	GLuint texturesGlu[25];
+	vector<float> t_time;
 	unsigned long lastRedraw;
-	Pnt3f train_pos;
-	Pnt3f train_dir;
-	Pnt3f train_updir;
+	vector<Pnt3f> train_pos;
+	vector<Pnt3f> train_dir;
+	vector<Pnt3f> train_updir;
 	bool isLoad = false;
 	unsigned int DIVIDE_LINE = 250;
 	typedef enum {
