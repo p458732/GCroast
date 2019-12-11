@@ -80,6 +80,7 @@ public:
 	void initializeTexture();
 
 	void PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01);
+	void PrintCircle(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01);
 
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
