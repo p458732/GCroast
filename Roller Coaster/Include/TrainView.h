@@ -13,6 +13,7 @@
 #include "Square.h"
 #include "Model.h"
 #include "3DSLoader.h"
+#include "Water.h"
 
 typedef struct tag_PARTICLE {
 	GLfloat xpos;//(xpos,ypos,zpos)為particle的position
@@ -60,7 +61,8 @@ public:
 	//virtual int handle(int);
 	virtual void paintGL();
 	//Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));火山
-	Model* m = new Model("D://arrow.obj", 100, Point3d(0, 0, 0));
+	Model* m = new Model("D://volcano02_subdiv_02.obj", 500, Point3d(250000, 20000, 250000));
+	Model* n = new Model("D://gargoyle.obj", 70, Point3d(-500, 90, -500));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
@@ -99,6 +101,7 @@ public:
 	Pnt3f GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type, float t);
 	Triangle* triangle;
 	Square* square;
+	Water* water;
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;

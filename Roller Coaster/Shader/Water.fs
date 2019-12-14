@@ -10,5 +10,6 @@ void main()
 {
 	
 	fColor = texture2D(Texture,vUV);
+	fColor=fColor-vec4(0.5,0.5,0.5,0);
 	
 }
