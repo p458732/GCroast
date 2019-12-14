@@ -144,8 +144,10 @@ void TrainView::drawTrain(float x)
 	//後
 	PrintTextures(train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0]);
-	PrintCircle(train_pos[0] + (-1.0) * cross_t + (1) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-1) * train_dir[0] + (-3) * train_updir[0],
-		train_pos[0] + (-1.0) * cross_t + (-1) * train_dir[0] + (3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (1) * train_dir[0] + (3) * train_updir[0]);
+	PrintCircle(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (-3) * train_updir[0] , 0);
+	PrintCircle(train_pos[0] + (-1.0) * cross_t + (-5) * train_dir[0] + (-3) * train_updir[0], 0);
+	PrintCircle(train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (-3) * train_updir[0], 0);
+	PrintCircle(train_pos[0] + (1.0) * cross_t + (-5) * train_dir[0] + (-3) * train_updir[0],0 );
 	if(subcar != 0)
 	for (int i = 1; i < subcar + 1; i++) {
 		Pnt3f cross_t = train_dir[i] * train_updir[i];
@@ -174,6 +176,10 @@ void TrainView::drawTrain(float x)
 		//後
 		PrintTextures(train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
 			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i]);
+		PrintCircle(train_pos[i] + (-1.0) * cross_t + (5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (-1.0) * cross_t + (-5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (1.0) * cross_t + (5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (1.0) * cross_t + (-5) * train_dir[i] + (-3) * train_updir[i], i);
 
 		//	//前
 		//PrintTextures(train_pos[i] + cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i],
@@ -1297,7 +1303,7 @@ void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
 	//glDisable(GL_TEXTURE_2D);
 }
 
-void TrainView::PrintCircle(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01)
+void TrainView::PrintCircle(Pnt3f p11,int num)
 {
 	glColor3f(0, 0, 0);
 	//glPointSize(50.0f);
@@ -1307,12 +1313,26 @@ void TrainView::PrintCircle(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01)
 	//glEnd();
 	//glDisable(GL_POINT_SMOOTH);//！！！！！
 	//glFlush();
+	//glPushMatrix();
+	//glRotatef(5.0, 0.0, 1.0, 0.0);
+	Pnt3f cross_t = train_dir[num] * train_updir[num];
+	cross_t.normalize();
 	glBegin(GL_POLYGON);
 	glEnable(GL_POLYGON_SMOOTH);
-	for(int i=0;i<100;i++)
-		glVertex3f(p00.x + 3.0 * cos(2 * 3.14159 / 100 * i), p00.y + 3.0 * sin(2 * 3.14159 / 100 * i), p00.z );
+	for (int i = 0; i < 100; i++)
+	{
+		if(cross_t.z < 0 && cross_t.x < 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z + cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if(cross_t.z > 0 && cross_t.x < 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z + cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if (cross_t.z < 0 && cross_t.x > 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if (cross_t.z > 0 && cross_t.x > 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
+	}	
 	glDisable(GL_POLYGON_SMOOTH);//！！！！！
 	glFlush();
+	//glPopMatrix();
 	//for (int i = 0; i < 100; i++)
 	//{
 	//	float plus = 0;
