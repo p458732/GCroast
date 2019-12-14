@@ -28,8 +28,10 @@ void TrainView::initializeGL()
 	//Initialize the triangle object
 	triangle->Init();
 	//Create a square object
+	water=new Water();
 	square = new Square();
 	//Initialize the square object
+	water->Init();
 	square->Init();
 	//Initialize texture 
 	initializeTexture();
@@ -40,6 +42,8 @@ void TrainView::initializeTexture()
 {
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
+	Textures.push_back(texture);
+	texture = new QOpenGLTexture(QImage("./Textures/water.bmp"));
 	Textures.push_back(texture);
 
 }
@@ -290,7 +294,7 @@ void TrainView::drawVolcanic()
 	
 	
 	m->render(false, false);
-	
+	n->render(false, false);
 
 
 }
@@ -377,7 +381,7 @@ void TrainView::paintGL()
 	/////////////////////////////////////////////////////
 	if (!isLoad)
 	{
-		t_time.push_back(0.0f);
+		t_time.push_back(0.0f); 
 		train_pos.push_back(Pnt3f(0, 0, 0));
 		train_dir.push_back(Pnt3f(0, 0, 0));
 		train_updir.push_back(Pnt3f(0, 1, 0));
@@ -395,6 +399,7 @@ void TrainView::paintGL()
 	
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
+		glEnable(GL_DEPTH_TEST);
 		setupShadows();
 		drawStuff(true);
 		unsetupShadows();
@@ -409,6 +414,17 @@ void TrainView::paintGL()
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
     
 	//we manage textures by Trainview class, so we modify square's render function
+	water->Begin();
+	//Active Texture
+	glActiveTexture(GL_TEXTURE0);
+	//Bind square's texture
+	Textures[1]->bind();
+	//pass texture to shader
+	water->shaderProgram->setUniformValue("Texture", 0);
+	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	water->Paint(ProjectionMatrex, ModelViewMatrex);
+	water->End();
+
 	square->Begin();
 		//Active Texture
 		glActiveTexture(GL_TEXTURE0);
@@ -443,6 +459,7 @@ setProjection()
 	}
 	else if (this->camera == 1)
 	{
+		glEnable(GL_DEPTH_TEST);
 		float wi, he;
 		if (aspect >= 1) {
 			wi = 110;
