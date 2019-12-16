@@ -1,4 +1,5 @@
 ﻿#include "TrainView.h"  
+#include<cmath>
 pParticle Particles;
 UINT nOfFires;
 
@@ -9,7 +10,7 @@ void DrawParticles();
 void ProcessParticles();
 GLuint    textureID;
 #define MAX_PARTICLES 1000  
-#define MAX_FIRES 5  
+#define MAX_FIRES 3  
 
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
@@ -27,8 +28,10 @@ void TrainView::initializeGL()
 	//Initialize the triangle object
 	triangle->Init();
 	//Create a square object
+	water=new Water();
 	square = new Square();
 	//Initialize the square object
+	water->Init();
 	square->Init();
 	//Initialize texture 
 	initializeTexture();
@@ -39,6 +42,8 @@ void TrainView::initializeTexture()
 {
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
+	Textures.push_back(texture);
+	texture = new QOpenGLTexture(QImage("./Textures/water.bmp"));
 	Textures.push_back(texture);
 
 }
@@ -126,24 +131,27 @@ void TrainView::drawTrain(float x)
 	Pnt3f cross_t = train_dir[0]* train_updir[0];
 	cross_t.normalize();
 	cross_t = cross_t * 4.0f;
-
+	
 	//前
-	PrintTextures(train_pos[0] + cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0],
+	PrintTextures(train_pos[0] + cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0], train_pos[0] + cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
 	//側
-	PrintTextures(train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
-	PrintTextures(train_pos[0] + (1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+	PrintTextures(train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
 	//上下
 	PrintTextures(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0],
 		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
-	PrintTextures(train_pos[0] + (-1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
-		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0]);
+	PrintTextures(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
+		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0]);
 	//後
 	PrintTextures(train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (-8) * train_dir[0] + (8) * train_updir[0]);
-
+	PrintCircle(train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (-3) * train_updir[0] , 0);
+	PrintCircle(train_pos[0] + (-1.0) * cross_t + (-5) * train_dir[0] + (-3) * train_updir[0], 0);
+	PrintCircle(train_pos[0] + (1.0) * cross_t + (5) * train_dir[0] + (-3) * train_updir[0], 0);
+	PrintCircle(train_pos[0] + (1.0) * cross_t + (-5) * train_dir[0] + (-3) * train_updir[0],0 );
 	if(subcar != 0)
 	for (int i = 1; i < subcar + 1; i++) {
 		Pnt3f cross_t = train_dir[i] * train_updir[i];
@@ -152,26 +160,47 @@ void TrainView::drawTrain(float x)
 		//連結線
 		glLineWidth(20);
 		glBegin(GL_LINES);
-		glVertex3f(train_pos[i - 1].x + (-8) * train_dir[i - 1].x, train_pos[i - 1].y + (-8) * train_dir[i - 1].y, train_pos[i - 1].z + (-8) * train_dir[i - 1].z);
-		glVertex3f(train_pos[i].x + (8) * train_dir[i].x, train_pos[i].y + (8) * train_dir[i].y, train_pos[i].z + (8) * train_dir[i].z);
+		glVertex3f(train_pos[i - 1].x + (-10) * train_dir[i - 1].x, train_pos[i - 1].y + (-10) * train_dir[i - 1].y, train_pos[i - 1].z + (-10) * train_dir[i - 1].z);
+		glVertex3f(train_pos[i].x + (10) * train_dir[i].x, train_pos[i].y + (10) * train_dir[i].y, train_pos[i].z + (10) * train_dir[i].z);
 		glEnd();
 		//車廂
-			//前
-		PrintTextures(train_pos[i] + cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i],
-			train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
+		//前
+		PrintTextures(train_pos[i] + cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i], train_pos[i] + cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i]);
 		//側
-		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
-			train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
-		PrintTextures(train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
-			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i]);
+		PrintTextures(train_pos[i] + (1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i]);
 		//上下
-		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i],
-			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
-		PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
-			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i]);
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (8) * train_updir[i]);
+		PrintTextures(train_pos[i] + (-1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (3) * train_dir[i] + (4) * train_dir[i] + (-3) * train_updir[i]);
 		//後
 		PrintTextures(train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
 			train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i]);
+		PrintCircle(train_pos[i] + (-1.0) * cross_t + (5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (-1.0) * cross_t + (-5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (1.0) * cross_t + (5) * train_dir[i] + (-3) * train_updir[i], i);
+		PrintCircle(train_pos[i] + (1.0) * cross_t + (-5) * train_dir[i] + (-3) * train_updir[i], i);
+
+		//	//前
+		//PrintTextures(train_pos[i] + cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i],
+		//	train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
+		////側
+		//PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+		//	train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
+		//PrintTextures(train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+		//	train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (5) * train_dir[i] + (8) * train_updir[i]);
+		////上下
+		//PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i],
+		//	train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (8) * train_updir[i]);
+		//PrintTextures(train_pos[i] + (-1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+		//	train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (8) * train_dir[i] + (-3) * train_updir[i]);
+		////後
+		//PrintTextures(train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i], train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (-3) * train_updir[i],
+		//	train_pos[i] + (1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i], train_pos[i] + (-1.0) * cross_t + (-8) * train_dir[i] + (8) * train_updir[i]);
 	}
 	//qt.x += cross_t.x;
 	//qt.y += cross_t.y;
@@ -265,7 +294,7 @@ void TrainView::drawVolcanic()
 	
 	
 	m->render(false, false);
-	
+	n->render(false, false);
 
 
 }
@@ -352,7 +381,7 @@ void TrainView::paintGL()
 	/////////////////////////////////////////////////////
 	if (!isLoad)
 	{
-		t_time.push_back(0.0f);
+		t_time.push_back(0.0f); 
 		train_pos.push_back(Pnt3f(0, 0, 0));
 		train_dir.push_back(Pnt3f(0, 0, 0));
 		train_updir.push_back(Pnt3f(0, 1, 0));
@@ -370,6 +399,7 @@ void TrainView::paintGL()
 	
 	// this time drawing is for shadows (except for top view)
 	if (this->camera != 1) {
+		glEnable(GL_DEPTH_TEST);
 		setupShadows();
 		drawStuff(true);
 		unsetupShadows();
@@ -384,6 +414,17 @@ void TrainView::paintGL()
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
     
 	//we manage textures by Trainview class, so we modify square's render function
+	water->Begin();
+	//Active Texture
+	glActiveTexture(GL_TEXTURE0);
+	//Bind square's texture
+	Textures[1]->bind();
+	//pass texture to shader
+	water->shaderProgram->setUniformValue("Texture", 0);
+	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
+	water->Paint(ProjectionMatrex, ModelViewMatrex);
+	water->End();
+
 	square->Begin();
 		//Active Texture
 		glActiveTexture(GL_TEXTURE0);
@@ -418,6 +459,7 @@ setProjection()
 	}
 	else if (this->camera == 1)
 	{
+		glEnable(GL_DEPTH_TEST);
 		float wi, he;
 		if (aspect >= 1) {
 			wi = 110;
@@ -443,7 +485,7 @@ setProjection()
 		//train_pos[0] + cross_t + (8) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0]
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(60.0,1, 0.01, 300);
+		gluPerspective(120.0,1, 1, 2000);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		Pnt3f cross_t = train_dir[0] * train_updir[0];
@@ -708,7 +750,20 @@ void TrainView::drawStuff(bool doingShadows)
 		else if(num != 0)
 		{
 			t_time[num] = t_time[num - 1];
-			for (float d = 0.0; d < 15.9;) {
+			float multiple = 1;
+			switch (type_spline) {
+			case spline_Linear:
+				multiple = 4;
+				break;
+			case spline_CardinalCubic:
+				multiple = 18;
+				break;
+			case spline_CubicB_Spline:
+				multiple = 18;
+				break;
+			}
+			Pnt3f qtTemp;
+			for (float d = 0.0; d < 15.9 * multiple;) {
 				t_time[num] += -0.01f * 280.0 / track_lengh;
 				if (t_time[num] < 0.0f)
 					t_time[num] += 1.0f;
@@ -726,18 +781,19 @@ void TrainView::drawStuff(bool doingShadows)
 				float t = time;
 				int intt = time;
 				t -= intt;
+
 				switch (type_spline) {
 				case spline_Linear:
 					qt = (1 - t) * cp_pos_p1 + t * cp_pos_p2;
 					break;
 				case spline_CardinalCubic:
-					orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, t);
+					qt = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 1, t);
 					break;
 				case spline_CubicB_Spline:
-					orient_t = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, t);
+					qt = GMT(2, cp_orient_p1, cp_orient_p2, cp_orient_p3, cp_orient_p4, 2, t);
 					break;
 				}
-				d = pow(pow(train_pos[num - 1].x - qt.x, 2) + pow(train_pos[num - 1].y - qt.y, 2) + pow(train_pos[num - 1].z - qt.z, 2), 0.5f);
+					d += pow(pow(train_pos[num - 1].x - qt.x, 2) + pow(train_pos[num - 1].y - qt.y, 2) + pow(train_pos[num - 1].z - qt.z, 2), 0.5f);
 			}
 		}
 		//temp data
@@ -971,7 +1027,7 @@ void InitParticle(Particle& ep)
 void Explosion1(Particle* par)
 {
 	Particle ep;
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		ep.b = float(rand() % 100) / 60.0f;
 		ep.g = float(rand() % 100) / 60.0f;
@@ -997,7 +1053,7 @@ void Explosion1(Particle* par)
 void Explosion2(Particle* par)
 {
 	Particle ep;
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 100; i++)
 	{
 		ep.b = par->b;
 		ep.g = par->g;
@@ -1023,7 +1079,7 @@ void Explosion3(Particle* par)
 {
 	Particle ep;
 	float PIAsp = 3.1415926 / 180;
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 10; i++) {
 		float angle = float(rand() % 360) * PIAsp;
 		ep.b = par->b;
 		ep.g = par->g;
@@ -1049,7 +1105,7 @@ void Explosion3(Particle* par)
 void Explosion4(Particle* par) {
 	Particle ep;
 	float PIAsp = 3.1415926 / 180;
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 10; i++) {
 		float angle = float(rand() % 360) * PIAsp;
 		ep.b = float(rand() % 100) / 60.0f;
 		ep.g = float(rand() % 100) / 60.0f;
@@ -1074,7 +1130,7 @@ void Explosion4(Particle* par) {
 
 void Explosion5(Particle* par) {
 	Particle ep;
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 10; i++) {
 		ep.b = par->b;
 		ep.g = par->g;
 		ep.r = par->r;
@@ -1098,7 +1154,7 @@ void Explosion5(Particle* par) {
 
 void Explosion6(Particle* par) {
 	Particle ep;
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 10; i++) {
 		ep.b = float(rand() % 100) / 60.0f;
 		ep.g = float(rand() % 100) / 60.0f;
 		ep.r = float(rand() % 100) / 60.0f;
@@ -1262,6 +1318,63 @@ void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
 	//glTexCoord2d(0, 1); glVertex3d(p01.x, p01.y, p01.z);
 	//glEnd();
 	//glDisable(GL_TEXTURE_2D);
+}
+
+void TrainView::PrintCircle(Pnt3f p11,int num)
+{
+	glColor3f(0, 0, 0);
+	//glPointSize(50.0f);
+	//glEnable(GL_POINT_SMOOTH);//圓形
+	//glBegin(GL_POINTS);
+	//glVertex3f(p00.x, p00.y, p00.z);
+	//glEnd();
+	//glDisable(GL_POINT_SMOOTH);//！！！！！
+	//glFlush();
+	//glPushMatrix();
+	//glRotatef(5.0, 0.0, 1.0, 0.0);
+	Pnt3f cross_t = train_dir[num] * train_updir[num];
+	cross_t.normalize();
+	glBegin(GL_POLYGON);
+	glEnable(GL_POLYGON_SMOOTH);
+	for (int i = 0; i < 100; i++)
+	{
+		if(cross_t.z < 0 && cross_t.x < 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z + cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if(cross_t.z > 0 && cross_t.x < 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z + cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if (cross_t.z < 0 && cross_t.x > 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
+		else if (cross_t.z > 0 && cross_t.x > 0)
+			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
+	}	
+	glDisable(GL_POLYGON_SMOOTH);//！！！！！
+	glFlush();
+	//glPopMatrix();
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	float plus = 0;
+	//	if (i < 25)
+	//		plus = (p01.z - p00.z) / 25;
+	//	else if (i < 50 && i >= 25)
+	//		plus = (p11.z - p01.z) / 25;
+	//	else if (i >= 50 && i < 75)
+	//		plus = (p01.z - p11.z) / 25;
+	//	else
+	//		plus = (p00.z - p01.z) / 25;
+	//	glVertex3f(p00.x + 5.0 * cos(2 * 3.14159 / 100 * i), p00.y + 5.0 * sin(2 * 3.14159 / 100 * i), plus * (i % 25) + (p00.z + p01.z) / 2);//計算坐標
+	//}
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	if(i<25)
+	//		glVertex3f(p00.x + 5.0 * cos(2 * 3.14159 / 100 * i), p00.y + 5.0 * sin(2 * 3.14159 / 100 * i), p00.z);//計算坐標
+	//	else if(i<50 && i>=25)
+	//		glVertex3f(p10.x + 5.0 * cos(2 * 3.14159 / 100 * i), p10.y + 5.0 * sin(2 * 3.14159 / 100 * i), p10.z);//計算坐標	
+	//	else if(i>=50 && i<75)
+	//		glVertex3f(p11.x + 5.0 * cos(2 * 3.14159 / 100 * i), p11.y + 5.0 * sin(2 * 3.14159 / 100 * i), p11.z);//計算坐標
+	//	else
+	//		glVertex3f(p01.x + 5.0 * cos(2 * 3.14159 / 100 * i), p01.y + 5.0 * sin(2 * 3.14159 / 100 * i), p01.z);//計算坐標
+	//}
+	glEnd();
 }
 
 

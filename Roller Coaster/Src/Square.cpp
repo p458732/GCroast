@@ -30,13 +30,14 @@ void Square::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 {
 	GLfloat P[4][4];
 	GLfloat MV[4][4];
+	GLfloat bus = 0.1;
 	DimensionTransformation(ProjectionMatrix,P);
 	DimensionTransformation(ModelViewMatrix,MV);
 	//pass projection matrix to shader
 	shaderProgram->setUniformValue("ProjectionMatrix",P);
 	//pass modelview matrix to shader
 	shaderProgram->setUniformValue("ModelViewMatrix",MV);
-
+	shaderProgram->setUniformValue("colorChange", bus);
 	// Bind the buffer so that it is the current active buffer
 	vvbo.bind();
 	// Enable Attribute 0
@@ -121,6 +122,7 @@ void Square::InitVBO()
 				<< QVector2D(1.0f - duv * (Divided - j - 1.0f), 0.0f + duv * i)
 				<< QVector2D(1.0f - duv * (Divided - j - 1.0f), 1.0f - duv * (Divided - i - 1.0f))
 				<< QVector2D(0.0f + duv * j, 1.0f - duv * (Divided - i - 1.0f));
+			
 			// Create Buffer for uv
 			uvbo.create();
 			// Bind the buffer so that it is the current active buffer
