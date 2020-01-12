@@ -859,7 +859,28 @@ void TrainView::drawStuff(bool doingShadows)
 		train_dir[num] = qt2 + (-1.0 * qt);
 		train_dir[num].normalize();
 	}
-	
+	/////////////////////////////////////draw Pillar
+	glColor3f(0, 0, 0);
+	glBegin(GL_QUAD_STRIP);
+	for (int e = 0; e <= 360; e += 15)
+	{
+		float p = e * 3.14 / 180;
+		glVertex3f(100 + sin(p),0 , 155 + cos(p));
+		glVertex3f(84 + sin(p), 25,164 + cos(p));
+	}
+	glFlush();
+	glEnd();
+	glColor3f(0, 0, 0);
+	glBegin(GL_QUAD_STRIP);
+	for (int e = 0; e <= 360; e += 15)
+	{
+		float p = e * 3.14 / 180;
+		glVertex3f(72 + sin(p), 0, 182 + cos(p));
+		glVertex3f(84 + sin(p), 25, 164 + cos(p));
+	}
+	glFlush();
+	glEnd();
+	////////////////////////////////////
 	
 	// draw the train
 	drawTrain(0);
@@ -1010,9 +1031,9 @@ void InitParticle(Particle& ep)
 	ep.life = 1.0f;//初始壽命
 	ep.fade = 0.005f + float(rand() % 21) / 10000.0f;//衰减速度
 	ep.size = 1;//大小  
-	ep.xpos = 80.0f + float(rand() % 301) / 10.0f;//位置 
-	ep.ypos = 5.0f;
-	ep.zpos = -100.0f + float(rand() % 201) / 10.0f;
+	ep.xpos = 120.0f + float(rand() % 301) / 10.0f;//位置 
+	ep.ypos = 8.0f;
+	ep.zpos = -140.0f + float(rand() % 201) / 10.0f;
 	if (!int(ep.xpos))//x方向速度(z方向相同)
 	{
 		ep.xspeed = 0.0f;
@@ -1282,9 +1303,9 @@ void ProcessParticles()
 			DeleteParticle(&par);
 		}
 		else{
-				par->xpos += par->xspeed * DTick;
+				par->xpos += par->xspeed * DTick * 0.2;
 				par->ypos += par->yspeed * DTick;
-				par->zpos += par->zspeed * DTick;
+				par->zpos += par->zspeed * DTick * 0.5;
 				par->yspeed -= grav * DTick;
 				if (par->bAddParts) {//假如有尾巴  
 					par->AddCount += 0.01f * DTick;//AddCount變化愈慢，尾巴粒子愈小  
