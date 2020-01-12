@@ -541,6 +541,7 @@ void TrainView::drawStuff(bool doingShadows)
 	drawVolcanic();
 	DrawParticles();
 	ProcessParticles();
+	Printtunnel();
 	//--------------------------------------------------------------------
 	// Draw the control points
 	// don't draw the control points if you're driving 
@@ -1357,7 +1358,6 @@ void TrainView::PrintCircle(Pnt3f p11,int num)
 	}	
 	glDisable(GL_POLYGON_SMOOTH);//！！！！！
 	glFlush();
-	//glPopMatrix();
 	//for (int i = 0; i < 100; i++)
 	//{
 	//	float plus = 0;
@@ -1383,6 +1383,37 @@ void TrainView::PrintCircle(Pnt3f p11,int num)
 	//		glVertex3f(p01.x + 5.0 * cos(2 * 3.14159 / 100 * i), p01.y + 5.0 * sin(2 * 3.14159 / 100 * i), p01.z);//計算坐標
 	//}
 	glEnd();
+}
+
+void TrainView::Printtunnel()
+{
+	int color[7][3] = { {255,0,0},{255,165,0},{255,255,0},{0,255,0},{0,191,255},{0,0,255},{106,90,205} };
+	for (int i = 0; i < 15; i++)
+	{
+		float num = 5 * i;
+		float value = 5 * (i + 1);
+		if(i%2 == 0)
+			glColor3ub(0, 0, 0);
+		else
+			glColor3ub(color[i/2][0], color[i / 2][1], color[i / 2][2]);
+		glBegin(GL_QUADS);
+		glVertex3f(-20 + num, 0, -80);
+		glVertex3f(-20 + num, 30, -80);
+		glVertex3f(-20 + value, 30, -80);
+		glVertex3f(-20 + value, 0, -80);
+
+		glVertex3f(-20 + num, 0, -60);
+		glVertex3f(-20 + num, 30, -60);
+		glVertex3f(-20 + value, 30, -60);
+		glVertex3f(-20 + value, 0, -60);
+
+		glVertex3f(-20 + value, 30, -60);
+		glVertex3f(-20 + num, 30, -60);
+		glVertex3f(-20 + num, 30, -80);
+		glVertex3f(-20 + value, 30, -80);
+		glEnd();
+	}
+
 }
 
 
