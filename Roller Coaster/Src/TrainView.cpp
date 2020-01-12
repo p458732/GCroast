@@ -131,7 +131,12 @@ void TrainView::drawTrain(float x)
 	Pnt3f cross_t = train_dir[0]* train_updir[0];
 	cross_t.normalize();
 	cross_t = cross_t * 4.0f;
-	
+
+	if (isrun)
+	{
+		trainWheelcount++;
+		trainWheelcount = trainWheelcount % 25;
+	}
 	//前
 	PrintTextures(train_pos[0] + cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0], train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (-3) * train_updir[0],
 		train_pos[0] + (-1.0) * cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0], train_pos[0] + cross_t + (5) * train_dir[0] + (4) * train_dir[0] + (8) * train_updir[0]);
@@ -1357,7 +1362,30 @@ void TrainView::PrintCircle(Pnt3f p11,int num)
 			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
 	}	
 	glDisable(GL_POLYGON_SMOOTH);//！！！！！
+	glEnd();
+
+	glColor3f(255, 255, 255);
+	glBegin(GL_LINES);
+	glLineWidth(0.5);
+	if (cross_t.z < 0 && cross_t.x < 0 || cross_t.z > 0 && cross_t.x < 0)
+	{
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * trainWheelcount) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * trainWheelcount), p11.z + cross_t.z * cos(2 * 3.14159 / 100 * trainWheelcount));
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 50)) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 50)), p11.z + cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 50)));
+
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 25)), p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 25)), p11.z + cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 25)));
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 75)), p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 75)), p11.z + cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 75)));
+	}
+	else
+	{
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * trainWheelcount), p11.y + 2.0 * sin(2 * 3.14159 / 100 * trainWheelcount), p11.z - cross_t.z * cos(2 * 3.14159 / 100 * trainWheelcount));
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 50)), p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 50)), p11.z - cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 50)));
+
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 25)), p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 25)), p11.z - cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 25)));
+		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * (trainWheelcount + 75)), p11.y + 2.0 * sin(2 * 3.14159 / 100 * (trainWheelcount + 75)), p11.z - cross_t.z * cos(2 * 3.14159 / 100 * (trainWheelcount + 75)));
+	}
 	glFlush();
+	glEnd();
+	
 	//for (int i = 0; i < 100; i++)
 	//{
 	//	float plus = 0;
@@ -1382,7 +1410,7 @@ void TrainView::PrintCircle(Pnt3f p11,int num)
 	//	else
 	//		glVertex3f(p01.x + 5.0 * cos(2 * 3.14159 / 100 * i), p01.y + 5.0 * sin(2 * 3.14159 / 100 * i), p01.z);//計算坐標
 	//}
-	glEnd();
+
 }
 
 void TrainView::Printtunnel()
