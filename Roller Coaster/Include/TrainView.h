@@ -61,8 +61,8 @@ public:
 	//virtual int handle(int);
 	virtual void paintGL();
 	//Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));火山
-	Model* m = new Model("./Textures/volcano02_subdiv_02.obj", 500, Point3d(250000, 20000, 250000));
-	Model* n = new Model("./Textures/gargoyle.obj", 70, Point3d(-500, 90, -650));
+	Model* m = new Model("./volcano02_subdiv_02.obj", 500, Point3d(250000, 20000, 250000));
+	Model* n = new Model("./gargoyle.obj", 70, Point3d(-500, 90, -650));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
