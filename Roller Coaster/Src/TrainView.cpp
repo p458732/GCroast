@@ -377,7 +377,15 @@ void TrainView::paintGL()
 	//*********************************************************************
 	setupFloor();
 	glDisable(GL_LIGHTING);
-	drawFloor(200,10);
+	//drawFloor(200,10);
+	glColor3ub(70, 70, 70);
+	glBegin(GL_QUADS);
+	glVertex3f(-200, 0, -200);
+	glVertex3f(-200, 0, 200);
+	glVertex3f(200, 0, 200);
+	glVertex3f(200, 0, -200);
+	glFlush();
+	glEnd();
 	/////////////////////////////////////////////////////
 	if (!isLoad)
 	{
