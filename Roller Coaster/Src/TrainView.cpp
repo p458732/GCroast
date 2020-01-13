@@ -1,16 +1,17 @@
 ﻿#include "TrainView.h"  
 #include<cmath>
-pParticle Particles;
-UINT nOfFires;
-
-UINT Tick1, Tick2( GetTickCount());  
-float DTick(float(Tick2 - Tick1) );  
+pParticle Particles,Part2,Part3,Part4;
+int Fire;
+UINT nOfFires[4];
+int fire = 0;
+UINT Tick1[4], Tick2[4];  
+float DTick[4];;
 GLfloat grav(0.00003f); 
 void DrawParticles();
 void ProcessParticles();
 GLuint    textureID;
 #define MAX_PARTICLES 1000  
-#define MAX_FIRES 3  
+#define MAX_FIRES 2  
 
 TrainView::TrainView(QWidget *parent) :  
 QGLWidget(parent)  
@@ -166,7 +167,8 @@ void TrainView::drawTrain(float x)
 		cross_t.normalize();
 		cross_t = cross_t * 4.0f;
 		//連結線
-		glLineWidth(20);
+		glColor3f(0, 0, 0);
+		//glLineWidth(20);
 		glBegin(GL_LINES);
 		glVertex3f(train_pos[i - 1].x + (-10) * train_dir[i - 1].x, train_pos[i - 1].y + (-10) * train_dir[i - 1].y, train_pos[i - 1].z + (-10) * train_dir[i - 1].z);
 		glVertex3f(train_pos[i].x + (10) * train_dir[i].x, train_pos[i].y + (10) * train_dir[i].y, train_pos[i].z + (10) * train_dir[i].z);
@@ -308,12 +310,10 @@ void TrainView:: resetArcball()
 
 void TrainView::drawVolcanic()
 {
-	
-	
-	
+
 	m->render(false, false);
 	n->render(false, false);
-
+	v->render(false, false);
 
 }
 void TrainView::paintGL()
@@ -412,6 +412,18 @@ void TrainView::paintGL()
 		train_pos.push_back(Pnt3f(0, 0, 0));
 		train_dir.push_back(Pnt3f(0, 0, 0));
 		train_updir.push_back(Pnt3f(0, 1, 0));
+
+		/*loadTexture2D("./Textures/grass.png", grass_ID);
+
+		glLoadIdentity();
+		glBindTexture(GL_TEXTURE_2D, grass_ID);
+		glBegin(GL_QUADS);
+		glTexCoord2f(1, 0); glVertex2f(-100, -100);
+		glTexCoord2f(0, 0); glVertex2f(-100, 0);
+		glTexCoord2f(0, 1); glVertex2f(100, 0);
+		glTexCoord2f(1, 1); glVertex2f(100, -100);
+		glEnd();
+		glDisable(GL_TEXTURE_2D);*/
 		isLoad = true;
 	}
 	/////////////////////////////////////////////////////
@@ -565,8 +577,12 @@ setProjection()
 void TrainView::drawStuff(bool doingShadows)
 {
 	drawVolcanic();
-	DrawParticles();
-	ProcessParticles();
+	for (int z = 0; z < 4; z++)
+	{
+		Fire = z;
+		DrawParticles();
+		ProcessParticles();
+	}
 	Printtunnel();
 	//--------------------------------------------------------------------
 	// Draw the control points
@@ -880,7 +896,28 @@ void TrainView::drawStuff(bool doingShadows)
 		train_dir[num] = qt2 + (-1.0 * qt);
 		train_dir[num].normalize();
 	}
-	
+	/////////////////////////////////////draw Pillar
+	glColor3f(0, 0, 0);
+	glBegin(GL_QUAD_STRIP);
+	for (int e = 0; e <= 360; e += 15)
+	{
+		float p = e * 3.14 / 180;
+		glVertex3f(100 + sin(p),0 , 155 + cos(p));
+		glVertex3f(84 + sin(p), 25,164 + cos(p));
+	}
+	glFlush();
+	glEnd();
+	glColor3f(0, 0, 0);
+	glBegin(GL_QUAD_STRIP);
+	for (int e = 0; e <= 360; e += 15)
+	{
+		float p = e * 3.14 / 180;
+		glVertex3f(72 + sin(p), 0, 182 + cos(p));
+		glVertex3f(84 + sin(p), 25, 164 + cos(p));
+	}
+	glFlush();
+	glEnd();
+	////////////////////////////////////
 	
 	// draw the train
 	drawTrain(0);
@@ -966,17 +1003,63 @@ void AddParticle(Particle ex)
 	p->bAddParts = ex.bAddParts;
 	p->bFire = ex.bFire;
 	p->nExpl = ex.nExpl;
-	if (!Particles)//當目前的Particle列表為空時
+	if (Fire == 0)
 	{
-		Particles = p;
-		return;
+		if (!Particles)//當目前的Particle列表為空時
+		{
+			Particles = p;
+			return;
+		}
+		else
+		{
+			Particles->pPrev = p;//插入Particle   
+			p->pNext = Particles;
+			Particles = p;
+		}
 	}
-	else
+	else if (Fire == 1)
 	{
-		Particles->pPrev = p;//插入Particle   
-		p->pNext = Particles;
-		Particles = p;
+		if (!Part2)//當目前的Particle列表為空時
+		{
+			Part2 = p;
+			return;
+		}
+		else
+		{
+			Part2->pPrev = p;//插入Particle   
+			p->pNext = Part2;
+			Part2 = p;
+		}
 	}
+	else if (Fire == 2)
+	{
+		if (!Part3)//當目前的Particle列表為空時
+		{
+			Part3 = p;
+			return;
+		}
+		else
+		{
+			Part3->pPrev = p;//插入Particle   
+			p->pNext = Part3;
+			Part3 = p;
+		}
+	}
+	else if (Fire == 3)
+	{
+		if (!Part4)//當目前的Particle列表為空時
+		{
+			Part4 = p;
+			return;
+		}
+		else
+		{
+			Part4->pPrev = p;//插入Particle   
+			p->pNext = Part4;
+			Part4 = p;
+		}
+	}
+
 }
 
 void DeleteParticle(pParticle* p)
@@ -994,7 +1077,10 @@ void DeleteParticle(pParticle* p)
 	{
 		tmp = (*p);
 		*p = (*p)->pNext;
-		Particles = *p;
+		if (Fire == 0)Particles = *p;
+		else if (Fire == 1)Part2 = *p;
+		else if (Fire == 2)Part3 = *p;
+		else if (Fire == 3)Part4 = *p;
 		(*p)->pPrev = NULL;
 		delete tmp;
 		return;
@@ -1017,12 +1103,6 @@ void DeleteParticle(pParticle* p)
 	}
 }
 
-void DeleteAll(pParticle* Part)
-{
-	while ((*Part))
-		DeleteParticle(Part);
-}
-
 void InitParticle(Particle& ep)
 {
 	ep.b = float(rand() % 100) / 60.0f;//顏色隨機
@@ -1031,23 +1111,44 @@ void InitParticle(Particle& ep)
 	ep.life = 1.0f;//初始壽命
 	ep.fade = 0.005f + float(rand() % 21) / 10000.0f;//衰减速度
 	ep.size = 1;//大小  
-	ep.xpos = 80.0f + float(rand() % 301) / 10.0f;//位置 
-	ep.ypos = 5.0f;
-	ep.zpos = -100.0f + float(rand() % 201) / 10.0f;
+	if (Fire == 0)
+	{
+		ep.xpos = 120.0f + float(rand() % 301) / 10.0f;//位置 
+		ep.ypos = 8.0f;
+		ep.zpos = -140.0f + float(rand() % 201) / 10.0f;
+	}
+	else if (Fire == 1)
+	{
+		ep.xpos = 40.0f + float(rand() % 301) / 10.0f;//位置 
+		ep.ypos = 8.0f;
+		ep.zpos = -140.0f + float(rand() % 201) / 10.0f;
+	}
+	else if (Fire == 2)
+	{
+		ep.xpos = -40.0f + float(rand() % 301) / 10.0f;//位置 
+		ep.ypos = 8.0f;
+		ep.zpos = -140.0f + float(rand() % 201) / 10.0f;
+	}
+	else if (Fire == 3)
+	{
+		ep.xpos = -120.0f + float(rand() % 301) / 10.0f;//位置 
+		ep.ypos = 8.0f;
+		ep.zpos = -140.0f + float(rand() % 201) / 10.0f;
+	}
 	if (!int(ep.xpos))//x方向速度(z方向相同)
 	{
 		ep.xspeed = 0.0f;
 	}
 	else
 	{
-		  if (ep.xpos < 0)
-		   {
-				  ep.xspeed = (rand() % int(-ep.xpos)) / 1500.0f;
-		   }
-		   else
-		   {
-				  ep.xspeed = -(rand() % int(-ep.xpos)) / 1500.0f;
-		   }
+		if (ep.xpos < 0)
+		{
+			ep.xspeed = (rand() % int(-ep.xpos)) / 1500.0f;
+		}
+		else
+		{
+			ep.xspeed = -(rand() % int(-ep.xpos)) / 1500.0f;
+		}
 	}
 	ep.yspeed = 0.04f + float(rand() % 11) / 1000.0f;//y方向速度(向上)
 	ep.bFire = 1;
@@ -1055,7 +1156,7 @@ void InitParticle(Particle& ep)
 	ep.bAddParts = 1;//設定有尾巴 
 	ep.AddCount = 0.0f;
 	ep.AddSpeed = 0.2f;
-	nOfFires++;//粒子數+1 
+	nOfFires[Fire]++;//粒子數+1 
 	AddParticle(ep);//加入粒子列表    
 }
 
@@ -1110,6 +1211,7 @@ void Explosion2(Particle* par)
 		AddParticle(ep);
 	}
 }
+
 void Explosion3(Particle* par)
 {
 	Particle ep;
@@ -1237,7 +1339,11 @@ void Explosion7(Particle* par) {
 
 void DrawParticles() {
 	pParticle par;
-	par = Particles;
+	int t = fire;
+	if (Fire == 0)par = Particles;
+	else if (Fire == 1)par = Part2;
+	else if (Fire == 2)par = Part3;
+	else if (Fire == 3)par = Part4;
 	while(par)
 	{
 		glColor4f(par->r, par->g, par->b, par->life);
@@ -1257,19 +1363,23 @@ void DrawParticles() {
 
 void ProcessParticles()
 {
-	Tick1  = Tick2;
-	Tick2  = GetTickCount();
-	DTick  = float(Tick2 - Tick1);
-	DTick *= 0.5f;
+	int t = fire;
+	Tick1[Fire]  = Tick2[Fire];
+	Tick2[Fire] = GetTickCount();
+	DTick[Fire] = float(Tick2[Fire] - Tick1[Fire]);
+	DTick[Fire] *= 0.5f;
 	Particle ep;
-	if (nOfFires < MAX_FIRES)
+	if (nOfFires[Fire] < MAX_FIRES)
 	{
 		InitParticle(ep);
 	}
 	pParticle par;
-	par = Particles;
+	if (Fire == 0)par = Particles;
+	else if (Fire == 1)par = Part2;
+	else if (Fire == 2)par = Part3;
+	else if (Fire == 3)par = Part4;
 	while(par) {
-		par->life -= par->fade * (float(DTick) * 0.1f);//Particle壽命衰減 
+		par->life -= par->fade * (float(DTick[Fire]) * 0.1f);//Particle壽命衰減 
 		if (par->life <= 0.05f) {//當壽命小於一定值          
 			if (par->nExpl) {//爆炸效果
 				switch (par->nExpl) {
@@ -1299,16 +1409,16 @@ void ProcessParticles()
 				}
 			}
 			if (par->bFire)
-				nOfFires--;
+				nOfFires[Fire]--;
 			DeleteParticle(&par);
 		}
 		else{
-				par->xpos += par->xspeed * DTick;
-				par->ypos += par->yspeed * DTick;
-				par->zpos += par->zspeed * DTick;
-				par->yspeed -= grav * DTick;
+				par->xpos += par->xspeed * DTick[Fire] * 0.2;
+				par->ypos += par->yspeed * DTick[Fire];
+				par->zpos += par->zspeed * DTick[Fire] * 0.5;
+				par->yspeed -= grav * DTick[Fire];
 				if (par->bAddParts) {//假如有尾巴  
-					par->AddCount += 0.01f * DTick;//AddCount變化愈慢，尾巴粒子愈小  
+					par->AddCount += 0.01f * DTick[Fire];//AddCount變化愈慢，尾巴粒子愈小  
 					if (par->AddCount > par->AddSpeed) {//AddSpeed愈大，尾巴粒子愈小  
 							par->AddCount = 0;
 							ep.b = par->b;
@@ -1335,6 +1445,7 @@ void ProcessParticles()
 		}
 	}
 }
+
 void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
 	glColor3f(0, 0, 0);
 	glBegin(GL_QUADS);
@@ -1357,7 +1468,7 @@ void TrainView::PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01) {
 
 void TrainView::PrintCircle(Pnt3f p11,int num)
 {
-	glColor3f(0, 0, 0);
+	glColor3f(255, 0, 0);
 	//glPointSize(50.0f);
 	//glEnable(GL_POINT_SMOOTH);//圓形
 	//glBegin(GL_POINTS);
@@ -1383,11 +1494,11 @@ void TrainView::PrintCircle(Pnt3f p11,int num)
 			glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * i) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * i) , p11.z - cross_t.z  * cos(2 * 3.14159 / 100 * i));
 	}	
 	glDisable(GL_POLYGON_SMOOTH);//！！！！！
+	glFlush();
 	glEnd();
 
 	glColor3f(255, 255, 255);
 	glBegin(GL_LINES);
-	glLineWidth(0.5);
 	if (cross_t.z < 0 && cross_t.x < 0 || cross_t.z > 0 && cross_t.x < 0)
 	{
 		glVertex3f(p11.x + 1.0 * cos(2 * 3.14159 / 100 * trainWheelcount) , p11.y + 2.0 * sin(2 * 3.14159 / 100 * trainWheelcount), p11.z + cross_t.z * cos(2 * 3.14159 / 100 * trainWheelcount));
@@ -1463,6 +1574,21 @@ void TrainView::Printtunnel()
 		glEnd();
 	}
 
+}
+
+void TrainView::loadTexture2D(QString str, GLuint&)
+{
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+	QImage img(str);
+	QImage opengl_grass = QGLWidget::convertToGLFormat(img);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, opengl_grass.width(), opengl_grass.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, opengl_grass.bits());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glDisable(GL_TEXTURE_2D);
 }
 
 

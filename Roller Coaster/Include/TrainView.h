@@ -61,8 +61,9 @@ public:
 	//virtual int handle(int);
 	virtual void paintGL();
 	//Model* m = new Model("D://volcano02_subdiv_02.obj", 0, Point3d(0, 0, 0));火山
-	Model* m = new Model("D://volcano02_subdiv_02.obj", 500, Point3d(250000, 20000, 250000));
-	Model* n = new Model("D://gargoyle.obj", 70, Point3d(-500, 90, -500));
+	Model* m = new Model("./volcano02_subdiv_02.obj", 500, Point3d(250000, 20000, 250000));
+	Model* n = new Model("./gargoyle.obj", 70, Point3d(-500, 90, -650));
+	Model* v = new Model("./IronMan.obj", 70, Point3d(300, 120, -300));
 	// all of the actual drawing happens in this routine
 	// it has to be encapsulated, since we draw differently if
 	// we're drawing shadows (no colors, for example)
@@ -84,6 +85,7 @@ public:
 	void PrintTextures(Pnt3f p00, Pnt3f p10, Pnt3f p11, Pnt3f p01);
 	void PrintCircle(Pnt3f p00 , int num);
 	void Printtunnel();
+	void loadTexture2D(QString, GLuint&);
 public:
 	ArcBallCam		arcball;			// keep an ArcBall for the UI
 	int				selectedCube;  // simple - just remember which cube is selected
@@ -122,5 +124,6 @@ public:
 		spline_CubicB_Spline = 2
 	} spline_t;
 	void drawTrain(float x);
+	GLuint grass_ID;
 };  
 #endif // TRAINVIEW_H  
