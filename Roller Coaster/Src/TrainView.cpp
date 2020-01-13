@@ -290,7 +290,7 @@ void TrainView::drawTrain(float x)
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT3);
 	Pnt3f trainss= train_pos[0] +  (20) * train_dir[0] + (8) * train_updir[0];
-	GLfloat lightPosition4[] = { trainss.x, trainss.y, trainss.z, 1.0f };
+	GLfloat lightPosition4[] = { trainss.x, trainss.y, trainss.z, 0.0f };
 	GLfloat red[] = { 1.0f, .0f, .0f, 1.0f };
 	GLfloat white_light[] = { 1.0f, 1.0f, 1.0f, 1.0 };
 	glLightfv(GL_LIGHT3, GL_POSITION, lightPosition4);
