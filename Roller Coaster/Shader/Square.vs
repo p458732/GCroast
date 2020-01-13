@@ -5,14 +5,12 @@ layout(location = 1) in vec2 uv;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelViewMatrix;
-uniform float colorChange;
+attribute float colorChange;
 
 out vec2 vUV;
-out float colorChanged;
 
 void main(void)
 {
     gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(vertex, 1.0);
     vUV = uv;
-	colorChanged = colorChange;
 }

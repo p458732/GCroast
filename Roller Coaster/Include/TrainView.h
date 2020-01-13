@@ -107,6 +107,7 @@ public:
 	GLfloat ProjectionMatrex[16];
 	GLfloat ModelViewMatrex[16];
 	QVector<QOpenGLTexture*> Textures;
+
 	vector<float> t_time;
 	unsigned long lastRedraw;
 	vector<Pnt3f> train_pos;

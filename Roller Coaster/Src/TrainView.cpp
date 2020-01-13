@@ -28,7 +28,7 @@ void TrainView::initializeGL()
 	//Initialize the triangle object
 	triangle->Init();
 	//Create a square object
-	water=new Water();
+	water = new Water();
 	square = new Square();
 	//Initialize the square object
 	water->Init();
@@ -43,8 +43,11 @@ void TrainView::initializeTexture()
 	//Load and create a texture for square;'stexture
 	QOpenGLTexture* texture = new QOpenGLTexture(QImage("./Textures/Tupi.bmp"));
 	Textures.push_back(texture);
-	texture = new QOpenGLTexture(QImage("./Textures/water.bmp"));
+	//---------------------------------------------------------------------------------
+	texture = new QOpenGLTexture(QImage("./Textures/Water.bmp"));
 	Textures.push_back(texture);
+	//----------------------------------------- 
+
 
 }
 Pnt3f TrainView::GMT(float tau, Pnt3f con1, Pnt3f con2, Pnt3f con3, Pnt3f con4, int type,float t)
@@ -282,6 +285,16 @@ void TrainView::drawTrain(float x)
 	//	glTexCoord2f(0.0f, 1.0f);//左上
 	//	glVertex3f(qt.x - 5, qt.y + 5, qt.z + 5);
 	//	glEnd();
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT3);
+	Pnt3f trainss= train_pos[0] +  (20) * train_dir[0] + (8) * train_updir[0];
+	GLfloat lightPosition4[] = { trainss.x, trainss.y, trainss.z, 1.0f };
+	GLfloat red[] = { 1.0f, .0f, .0f, 1.0f };
+	GLfloat white_light[] = { 1.0f, 1.0f, 1.0f, 1.0 };
+	glLightfv(GL_LIGHT3, GL_POSITION, lightPosition4);
+	glLightfv(GL_LIGHT3, GL_DIFFUSE, white_light);
+	
+
 
 }
 void TrainView:: resetArcball()
@@ -360,10 +373,11 @@ void TrainView::paintGL()
 	GLfloat lightPosition1[]	= {0,1,1,0}; // {50, 200.0, 50, 1.0};
 	GLfloat lightPosition2[]	= {1, 0, 0, 0};
 	GLfloat lightPosition3[]	= {0, -1, 0, 0};
+	
 	GLfloat yellowLight[]		= {0.5f, 0.5f, .1f, 1.0};
 	GLfloat whiteLight[]		= {1.0f, 1.0f, 1.0f, 1.0};
 	GLfloat blueLight[]			= {.1f,.1f,.3f,1.0};
-	GLfloat grayLight[]			= {.3f, .3f, .3f, 1.0};
+	GLfloat grayLight[]			= {.1f, .3f, .3f, 1.0};
 
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition1);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, whiteLight);
@@ -425,13 +439,18 @@ void TrainView::paintGL()
 
 	//Call triangle's render function, pass ModelViewMatrex and ProjectionMatrex
  	triangle->Paint(ProjectionMatrex,ModelViewMatrex);
-    
-	//we manage textures by Trainview class, so we modify square's render function
+    //----------
+	//----------
+	//use render texture
 	water->Begin();
 	//Active Texture
 	glActiveTexture(GL_TEXTURE0);
-	//Bind square's texture
 	Textures[1]->bind();
+	//Bind square's texture
+	//we manage textures by Trainview class, so we modify square's render function
+	//Active Texture
+
+	//Bind square's texture
 	//pass texture to shader
 	water->shaderProgram->setUniformValue("Texture", 0);
 	//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
@@ -448,6 +467,8 @@ void TrainView::paintGL()
 		//Call square's render function, pass ModelViewMatrex and ProjectionMatrex
 		square->Paint(ProjectionMatrex,ModelViewMatrex);
 	square->End();
+	
+	
 }
 
 //************************************************************************

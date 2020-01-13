@@ -30,14 +30,14 @@ void Square::Paint(GLfloat* ProjectionMatrix, GLfloat* ModelViewMatrix)
 {
 	GLfloat P[4][4];
 	GLfloat MV[4][4];
-	GLfloat bus = 0.1;
+	GLfloat bus = 0.5;
 	DimensionTransformation(ProjectionMatrix,P);
 	DimensionTransformation(ModelViewMatrix,MV);
 	//pass projection matrix to shader
 	shaderProgram->setUniformValue("ProjectionMatrix",P);
 	//pass modelview matrix to shader
 	shaderProgram->setUniformValue("ModelViewMatrix",MV);
-	shaderProgram->setUniformValue("colorChange", bus);
+	shaderProgram->setAttributeValue("colorChange", bus);
 	// Bind the buffer so that it is the current active buffer
 	vvbo.bind();
 	// Enable Attribute 0

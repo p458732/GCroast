@@ -2,7 +2,6 @@
 
 in vec2 vUV;
 in float colorChange;
-
 uniform sampler2D Texture;
 out vec4 fColor;
 
@@ -13,6 +12,7 @@ void main()
 	if(colorChange==0)
 	fColor = fColor-vec4(0.5,0.5,0.5,0);
 	else
-	fColor = fColor-vec4(colorChange,colorChange,colorChange,0);
+	fColor = vec4(colorChange,colorChange,colorChange,0);
+	
 	
 }
